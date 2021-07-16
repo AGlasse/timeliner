@@ -1,0 +1,18 @@
+# ID,Label,Lead,Title,colour,,,,,
+# source 1..n_sources,,,,,,,,,
+M-1,    On-sky rdy,-,'Ready for on-sky ops',olive
+sources,CAP-101,CAP-102,
+M-2,    ERO img/MRS rdy,-,      'Ready for ERO img/MRS',orange
+sources,CAP-103,CAP-406
+M-3,    Img rdy,821,'MIRI Imager science enabled',green
+sources,CAP-103,CAP-106,CAP-201,CAP-202-I
+M-4,    MRS rdy,822,'MIRI MRS science enabled',red
+sources,CAP-107,CAP-401,CAP-403,CAP-405-I,CAP-406,CAP-408
+M-5,    LRS rdy',M-5,'MIRI LRS science enabled',purple
+sources,CAP-107,CAP-301,CAP-302,CAP-303,CAP-304,CAP-305,CAP-405-I
+M-6,    Coro rdy,823,'MIRI Coro. science enabled',brown
+sources,CAP-202-I,CAP-501,CAP-502,CAP-503,CAP-504
+M-7,Bright target rdy,M-7,'MIRI Bright target science enabled',cyan
+sources,CAP-104,CAP-106,CAP-404,CAP-407
+M-EOC,End of Comm.,M-EOC,'End of commissioning',blue
+sources,CAP-108,CAP-109,CAP-202-II,CAP-405-II,CAP-601,CAP-302

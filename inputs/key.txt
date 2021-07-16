@@ -1,0 +1,20 @@
+Notes:
+1) Each black rectangular box corresponds to a CAR (Commissioning Activity Request)
+- The blue number at top left is the NGST timeline number
+- The black number at top right is the instrument team's CAR number (eg MIRI-xxx)
+- The red number at bottom right is the scheduled run date (L+days from March 2020 timeline)
+- The green number at bottom left is the PID number for the CARs APT script.
+- MIRI team led CARs are outlined in solid black
+- Non-MIRI team led CARs (will at some point) have a dashed outline
+2) Milestones (KDPs) are shown as blue filled boxes
+3) Each coloured box corresponds to a CAP (Commissioning Activity Project)
+- Dashed (CAP colour + black) lines connect CAPs to the CARs where the data is measured
+- Dotted lines connect CAPs to CAPs and KDPs which need the results of their analysis
+
+Glossary:
+CAM - Command Authorization Meeting\tCCC - Contamination Control Cover
+CCE - Cryo-cooler electronics\tFPS - Focal Plane System
+ICE - Instrument Control Electronics\tIMAG - Image Motion Assessment
+KDP - Key Decision Point\tLRM - Launch Release Mechanism
+MDT - Mechanism Disturbance Test\tOTE - Optical Telescope Element
+POM - Pick-off Mirror\tRTS - Ramps to Slopes (calibration pipeline)

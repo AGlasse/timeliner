@@ -1,0 +1,95 @@
+      ,  CAR_ID,   PID,ObsList,Short Title,Title
+9.1,    NG-9.1,   RTC,       ,ICDH On I,ICDH Power On and initialization (Part 1)
+9.2,    NG-9.2,   RTC,       ,ICDH On II,ICDH power On and initialization (pt 2: Loads & Ver
+18.1,  NG-18.1,   RTC,       ,ICE On I,MIRI ICE Power ON and Initialization
+18.2,  NG-18.2, RTC,       ,ICE On II,MIRI ICE Power ON and Initialization
+19,   MIR-042.1,  RTC,      ,CCC open,MIRI CCC Unlock and Opening
+37,   MIR-042.3,RTC,       ,CCC close,MIRI CCC Closure
+61,     NG-61,   RTC,       ,CCE On,CCE Power ON and Transition to State 2 (Internal De
+69.1,OTE-28.2,1165,5,Pre-MIMF 2 \n PSF check,Pre-MIMF 2 in focus PSF check
+84,OTE-29,1166,78.79.80.81.82,MIMF 2,MIMF measurement 2
+73,    MIR-004,1012,All,Cal lamps,MIRI Calibration Lamp Operation
+74.1, MIR-005.1,1023,1.2,Anneal \n Verification,MIRI Detector Anneal (First Instance)
+74.2, MIR-005.2,1023,3.4,Anneal 2,Anneal after MIRI-004
+74.3, MIR-005.3,1023,5.6.7,Anneal 3,Anneal after MIR-060
+74.4, MIR-005.4,1023,8,Anneal 4,Anneal before MIR-007
+74.5, MIR-005.5,1023,9,Anneal 5,Anneal before MIR-051
+74.6, MIR-005.6,1023,10.11.12.13,Anneal 6,Anneal before MIR-078
+74.7, MIR-005.7,1023,14,Anneal 7,Anneal before MIR-072
+74.8, MIR-005.8,1023,15,Anneal 8,Anneal after MIR-016
+74.9, MIR-005.9,1023,16.17.18.19,Anneal 9,Anneal before MIRI-061
+74.10, MIR-005.10,1023,20.21.22,Anneal 10,Anneal before MIR-056
+74.11, MIR-005.11,1023,20.21.22,Anneal 11,Anneal before MIR-077
+76,   MIR-007,1024,All,Distortion,MIRI Plate Scale & Geometric Distort Measure
+88.1, MIR-011.1,1027,1.2.3.4.5.6.7.8.9.20,Phot zero pts,Photometric zero points
+88.2, MIR-011.2,1027,11.12.13.14.15.16.17.18.19,Phot zero pts,MIRI Imager Photometric Zero Points and Stability
+89,   MIR-012,1028,All,Img PSF,MIRI Imager PSF Characterization
+114,  MIR-013,1029,All,MRS/LRS TA,MIRI MRS/LRS Target Acquisition
+115,  MIR-014,1030,All,RdNoise / Darks,MIRI Readnoise and Dark Current - Parallel
+116,  MIR-015,1031,All,MRS dispersion,MIRI Spectral Resolution and Dispersion Relation
+117,  MIR-040,  RTC,       ,Mech. char,MIRI Mechanism Characterization
+118,  MIR-041,  RTC,       ,POM char.,MIRI Pick-Off Mirror Characterization
+119,  MIR-016,1032,All,Img/LRS glints,MIRI Imager and LRS Glints and Scattered Light
+125.1, MIR-001.1,RTC,       ,FPS warm checkout,MIRI Focal Plane System Warm Checkout
+125.2,MIR-001.2,RTC,       ,FPS warm checkout,MIRI Focal Plane System Warm Checkout
+126,  MIR-002,1011,2,FPS configs,MIRI Focal Plane Configurations
+127,  MIR-050,1037,All,Coro contrast,MIRI Coronagraphic Scattered Light & Contrast Ratio
+133.1,NG-133.1,RTC,       ,Cooler S4,Cryocooler Transition to JT Bypass Mode (State 4)
+133.2,NG-133.2,RTC,       ,Cooler S4,Cryocooler Transition to JT Bypass Mode (State 4) p
+134.1,NG-134.1,RTC,       ,Cooler S5 (pp),Cryocooler Transition to Pinch Point/Steps 1-22  (S
+134.2,NG-134.2,RTC,,Cooler S5 (pp),Cryocooler Transition to Pinch Point/Steps 23 & 24
+136,  NG-136,RTC,,Cooler S6,Cryocooler Transition to Steady State Cooling  (Sta
+139,  MIR-060,1046,All,Detector func.,MIRI Detector Functionality (Parallel)
+141,  MIR-051,1038,All,Coro centres,MIRI Locations of Centers of Coronagraphs
+144,  MIR-018,1034,All,LRS slit losses,MIRI LRS Slit Transmission and Losses
+145,  MIR-052,1039,All,Latent char.,MIRI Detector Latent Image Characterization
+165,  MIR-061,1047,All,MRS ext flat,MIRI External Flat Field - MRS
+167,  MIR-063,1049,All,MRS PSF,MIRI MRS PSF Characterization and Spatial Resolutio
+168.1,MIR-064.1,1050,1.2.3.4.6.7,MRS phot sens/stab,MIRI MRS Photometric Sensitivity and Stability (Par
+168.2,MIR-064.2,1050,5,MRS phot sens/stab,MIRI MRS Photometric Sensitivity and Stability (Par
+214,  MIR-017,1033,All,LRS phot sens’,MIRI LRS Photometric Sensitivity and Stability
+216,  MIR-055,1042,All,LRS point src flat,MIRI External Flat Field - Low Resolution Spectrome
+217.1,MIR-058.1,1045,All,Coro PSF photom,MIRI Coronagraph PSF - Photometry
+217.2,MIR-058.2,1045,All,Coro PSF scans,MIRI Coronagraph PSF - Radial/transition scans
+218,  MIR-056,1043,All,Coro ext flat,MIRI External Flat Field - Coronagraphs
+227,  MIR-053,1040,All,Img ext. flat,MIRI External Flat Field - Imager
+270.1,OTE-34.1,RTC,,SIAF update,WF - SIAF Update (MIRI  FGS) - data
+270.2,OTE-34.2,RTC,,SIAF update,WF - SIAF Update (MIRI  FGS) - confirmation
+352,  OTE-35,1172,All,Pupil align.,MIRI Pupil Alignment Check
+700,  NIS-16,RTC,,NIRISS wavecal.,NIRISS GR150C/R Wavelength Calibration
+752,  NG-752,RTC,,Slew to HOT’,Obs slew to hot
+754,  STL-002,1448,All,Obs. Straylight,Stray Light Correlation (includes slew to 5 attitudes)
+764.1, MIR-071.1, RTC,       ,ICE basic func,MIRI ICE Warm Basic Functional Test
+764.2, MIR-071.2,RTC,       ,ICE basic func,MIRI ICE Warm Basic Functional Test
+764.3,MIR-071.3,RTC,       ,ICE basic func,MIRI ICE Basic Functional Test (COLD)
+765, NG-765,RTC,          ,MIRI CCC Open 2,MIRI CCC 2nd opening
+769,  MIR-075,1054,All,LRS ext src flat,MIRI LRS Extended Source Flat Field
+770,  MIR-074,1053,All,LRS PSF,MIRI LRS PSF Characterization
+774.3,FGS-17.3,1022,17.18.19.20.21.22.23.24.25,FGS giant planet,FGS Giant Planet Scattered Light (MIRI)
+803.1,OTE-24.2, RTC,       ,Cooler IMA <S4,Cryocooler Image Motion Assessment - Before Transit
+803.2,OTE-24.2, RTC,       ,Cooler IMA >S4,Cryocooler Image Motion Assessment - After Transiti
+804,  OTE-33,RTC,,Cooler IMA steady,CryoCooler Image Motion Assessment - Steady State
+805,  OTE-33,RTC,,Cooler f sweep,Cryocooler Mandatory Drive Frequency Sweep - Steady
+808,NG-808,RTC,,Slew to COLD’,Obs slew to cold
+812.1,MIR-073.1,1052,1.2.3,Sky bgd,MIRI Sky background variation with telescope pointi
+812.2,MIR-073.2,1052,4.5.6,Sky bgd,MIRI Sky background variation with telescope pointi
+813,  MIR-072,RTC,,Img pix flat,MIRI Imager Pixel Flat
+815,   NG-815,  RTC,      ,FPE On,MIRI FPE Power ON
+817, MIR-042.2,RTC,       ,FPM htr on,MIRI FPM Heater Power ON during Cooldown
+818,  MIR-042.9,RTC,       ,FPM htr off,MIRI FPM Heater Power OFF
+858,  MIR-042.5,RTC,       ,FPM htr adj 1,MIRI FPM Heater 1st Adjustment
+859,  MIR-042.7,RTC,       ,FPM htr adj 2,MIRI FPM Heater 2nd Adjustment
+860,  MIR-042.8,RTC,       ,FPM htr 3,MIRI FPM Heater 3rd Adjustment
+866,  NG-866,  RTC,       ,ICE Off,MIRI ICE Power OFF
+873,  MIR-077,1261,All,Bright source sens,MIRI Bright Source Sensitivity
+882,  MIR-078,1406,All,Coro TA,MIRI Coronagraphic Target Acquisition
+883,  MIR-076,1259,All,LRS dispersion,MIRI LRS Spectral Resolution and Dispersion Ratio
+887.1, MIR-042.4,    RTC,    ,POM htr on,Start MIRI POM Cooldown Operations
+887.2,MIR-042.6,RTC,       ,POM htr off,End MIRI POM Cooldown Operations
+904, MIR-080,RTC,          ,'JT AA Recovery','JT assisted anneals recovery'
+905, MIR-081,RTC,          ,'JT AA Jitter','MIRI JT Anneal //l with NIRCAM'
+906.?,MIR-082.?,RTC,,JT AA Final Config,MIRI JT Anneal Final Configuration
+924.1,MIR-065,1519,All,RSCD and\nNreset=1,Frame reset and RSCD
+ERO-1.1,ERO-1.1,TBD,All,'1st MIRI ERO','1st MIRI ERO Observation'
+NG-new,MIR-065,1546,All,'Frame reset + \nRSCD',NG-new
+END
