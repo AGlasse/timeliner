@@ -40,8 +40,7 @@ KdpUtils.schedule_kdps()
 kdps = KdpUtils.kdps
 
 print()
-
-dataflow = False        # True = Replot dataflow diagrams
+dataflow = True        # True = Replot dataflow diagrams
 if dataflow:
     dataflow = DataFlow()
     dc_keys = DataFlow.col_dict.keys()
@@ -55,12 +54,15 @@ rota = ShiftPlan.create_rota()
 rota = ShiftPlan.allocate_smes(rota)
 #ShiftPlan.plot_staff_schedules(name='s1.png')
 #ShiftPlan.plot_rota(rota, 'r1')
-rota = ShiftPlan.allocate_non_smes(rota)
+rota = ShiftPlan.allocate_scheduled(rota)
 #ShiftPlan.plot_staff_schedules(name='s2.png')
 #ShiftPlan.plot_rota(rota, 'r2')
-rota = ShiftPlan.tidy_rota(rota)
+rota = ShiftPlan.allocate_non_smes(rota)
 #ShiftPlan.plot_staff_schedules(name='s3.png')
 #ShiftPlan.plot_rota(rota, 'r3')
+rota = ShiftPlan.tidy_rota(rota)
+#ShiftPlan.plot_staff_schedules(name='s4.png')
+#ShiftPlan.plot_rota(rota, 'r4')
 rota = ShiftPlan.remove_singles(rota)
 ShiftPlan.plot_staff_schedules(name='staff_schedule.png')
 ShiftPlan.print(to_csv=True)

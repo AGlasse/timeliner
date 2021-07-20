@@ -15,7 +15,7 @@ class Person:
 
     def __init__(self, idents, availabilty):
         self.initial, self.forename, self.surname, self.email, self.organisation = idents
-        self.is_reserve, max_nweeks, max_nweeks_block, self.blackout_days, schedule_days, self.inbaltimore_days = availabilty
+        self.is_reserve, max_nweeks, max_nweeks_block, self.blackout_days, schedule_days = availabilty
         self.fg_colour = 'black'
         self.max_allocation = 7 * max_nweeks
         self.max_contiguous_allocation = 7 * max_nweeks_block
@@ -66,11 +66,14 @@ class Person:
         return -1
 
     def _schedule(self, rota, **kwargs):
+        """ Schedule this person in the rota. """
         task = kwargs.get('task', None)
+        forced = kwargs.get('forced', False)
 
         daily_slots = ShiftPlan.daily_slots
         n_rows, n_days = rota.shape
         start_col, end_col, car_col = 0, n_days, -1
+
         if task != None:
             car_col = int(task.t_start) - ShiftPlan.start_day
             start_col = car_col - self.arrival_buffer
@@ -79,27 +82,31 @@ class Person:
 
         for col in range(start_col, end_col):
             n_slots = daily_slots[col]
-            if self.timetable[col] != Person.resting:
-                if self.timetable[col] != Person.blackout:
-                    need_rest = self.contiguously_allocated >= self.max_contiguous_allocation
-                    if need_rest:
-                        rest_days = 4
-                        n_allocated = self._get_allocated()
-                        if n_allocated + rest_days < self.max_allocation:    # maybe go home..
-                            self.timetable[col:col + rest_days + 1] = Person.resting
-                            if (self.initial == 'ALI'):
-                                print("ALI - allocated {:d} rest days from col = {:d}".format(rest_days, col))
-                            self.contiguously_allocated = 0
-                    else:
-                        n_allocated = self._get_allocated()
-                        ok_total = n_allocated < self.max_allocation
-                        if ok_total:
-                            row = self._find_free_row(rota[:, col], n_slots)  # Find (any) free slot on day of CAR
-                            if row != -1:
-                                role = Person.sme_role if col == car_col else Person.on_console
-                                rota[row, col] = self
-                                self.timetable[col] = role
-                                self.contiguously_allocated += 1
+            current_role = self.timetable[col]
+            is_forced = current_role == Person.on_console   # Force scheduled busy or not
+            is_resting = current_role == Person.resting
+            is_blackout = current_role == Person.blackout
+            is_sme = current_role == Person.sme_role
+            is_busy = is_resting or is_blackout or is_sme
+
+            if (not forced and not is_busy) or (forced and is_forced):
+                need_rest = self.contiguously_allocated >= self.max_contiguous_allocation
+                if need_rest:
+                    rest_days = 4
+                    n_allocated = self._get_allocated()
+                    if n_allocated + rest_days < self.max_allocation:    # maybe go home..
+                        self.timetable[col:col + rest_days + 1] = Person.resting
+                        self.contiguously_allocated = 0
+                else:
+                    n_allocated = self._get_allocated()
+                    ok_total = n_allocated < self.max_allocation
+                    if ok_total:
+                        row = self._find_free_row(rota[:, col], n_slots)  # Find (any) free slot on day of CAR
+                        if row != -1:
+                            role = Person.sme_role if col == car_col else Person.on_console
+                            rota[row, col] = self
+                            self.timetable[col] = role
+                            self.contiguously_allocated += 1
         return rota
 
     def schedule_smes(self, rota):
@@ -107,6 +114,11 @@ class Person:
         """
         for task in self.sme_tasks:
             rota = self._schedule(rota, task=task)
+        return rota
+
+    def schedule_forced(self, rota):
+        """ Schedule 'forced' (scheduled) dates """
+        rota = self._schedule(rota, forced=True)
         return rota
 
     def schedule_remaining(self, rota):

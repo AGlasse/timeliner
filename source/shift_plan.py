@@ -183,10 +183,9 @@ class ShiftPlan:
                     max_nweeks, max_nweeks_block  = (int(token.strip()) for token in tokens[5:7])
                     blackout_days = ShiftPlan._decode_period_token(tokens[7])
                     scheduled_days = ShiftPlan._decode_period_token(tokens[8])
-                    inbaltimore_days = ShiftPlan._decode_period_token(tokens[9])
-                    availability = is_reserve, max_nweeks, max_nweeks_block, blackout_days, scheduled_days, inbaltimore_days
+                    availability = is_reserve, max_nweeks, max_nweeks_block, blackout_days, scheduled_days
                     person = Person(ident, availability)
-                    for token in tokens[10:]:
+                    for token in tokens[9:]:
                         idt_id = token.strip()
                         if len(idt_id) > 2:
                             task, err_msg = CapUtils.get_cap(idt_id)
@@ -199,7 +198,6 @@ class ShiftPlan:
                             else:
                                 person.sme_tasks.append(task)
                     staff.append(person)
-
         n_staff = len(staff)
         colours = Tools.get_colour_list(n_staff)
         for i, person in enumerate(staff):
@@ -302,6 +300,13 @@ class ShiftPlan:
         return rota
 
     @staticmethod
+    def allocate_scheduled(rota):
+        staff = ShiftPlan.staff
+        for person in staff:
+            rota = person.schedule_forced(rota)
+        return rota
+
+    @staticmethod
     def allocate_non_smes(rota):
         staff = ShiftPlan.staff
         for person in staff:
@@ -380,10 +385,10 @@ class ShiftPlan:
         plot = Plot()
         fig, axs = plot.set_plot_area('MIRI Shift Schedule',
                                       ncols=1, nrows=n_panes, fontsize=16)
+
+        y_pitch = (0.010, 0.015, 0.020)[n_panes-1] * yrange
         xorg = ShiftPlan.start_day
-
         xlm = ShiftPlan.launchdoy_last_monday - ShiftPlan.launchdoy
-
         for pane in range(0, n_panes):
             ax = axs[pane, 0]
             xmin = xorg + xrange * pane
@@ -400,13 +405,14 @@ class ShiftPlan:
 
             while xlm < xmax:
                 ax.plot([xlm, xlm], [ylim[0], ylim[1]], color='grey', lw=1.5)
-                ax.text(xlm+0.001*xrange, 0.98*yrange, 'Mon', color='grey')
                 year, doy = ShiftPlan._md_to_doy(xlm)
                 doy_text = '{:d}'.format(doy)
-                ax.text(xlm+0.001*xrange, 0.96*yrange, doy_text, color='grey')
+                ax.text(xlm+0.001*xrange, yrange - 2.0*y_pitch, doy_text, color='grey')
                 year, month, dom = ShiftPlan._doy_to_ymd(year, doy)
-                dom_text = '{:d}'.format(dom)
-                ax.text(xlm+0.001*xrange, 1.01*yrange, dom_text, color='blue')
+                ax.text(xlm+0.001*xrange, yrange - y_pitch, 'Mon', color='grey')
+                if dom > 4:
+                    dom_text = '{:d}'.format(dom)
+                    ax.text(xlm+0.001*xrange, yrange + 0.1*y_pitch, dom_text, color='blue')
                 xlm += 7
             xl = launch_phase
             ax.plot([xl, xl], [ylim[0], 1.01*yrange], color='blue', lw=1.5, ls='--')
@@ -414,7 +420,7 @@ class ShiftPlan:
             lda, lti = ShiftPlan.launchdate, ShiftPlan.launchtime
             fmt = 'Launch on {:d}/{:d}/{:d}\nat {:5.2f} UT'
             launch_text = fmt.format(lyr, lmo, lda, lti)
-            ax.text(xl+0.001*xrange, 1.01*yrange, launch_text, color='blue')
+            ax.text(xl+0.001*xrange, yrange + y_pitch, launch_text, color='blue')
             year = ShiftPlan.launchyear
             month = ShiftPlan.launchmonth + 1
             is_more = True
@@ -422,7 +428,7 @@ class ShiftPlan:
                 xdom = ShiftPlan._ymd_to_md(year, month, 1)
                 if xdom > 10:
                     text = "{:s}".format(ShiftPlan.month_names[month-1])
-                    ax.text(xdom + 0.001*xrange, 1.01*yrange, text, color='blue')
+                    ax.text(xdom + 0.001*xrange, yrange + 0.1*y_pitch, text, color='blue')
                 ax.plot([xdom, xdom], [ylim[0], ylim[1] + 5.0 * yrange], color='blue', lw=1.5, ls='-')
 
                 month += 1
@@ -479,7 +485,7 @@ class ShiftPlan:
                                     ax.add_patch(bar)
                                     bartext = on_yesterday.surname
                                     is_dark = Tools.is_dark(bar_colour)
-                                    text_colour = 'yellow' if is_dark else 'black'
+                                    text_colour = 'black'   #if is_dark else 'black'
                                     ax.text(xon, ybar, bartext,
                                             ha='left', va='bottom', color=text_colour)
                                     sme_tasks = on_yesterday.sme_tasks     # Plot SME tasks on timeline
@@ -565,9 +571,17 @@ class ShiftPlan:
             ax.set_xlim(xlim)
             ax.set_ylim(ylim)
             ax.get_yaxis().set_ticks([])
-
+            nbars_group = 5                                 # Split into groups for readability
+            ibar = -1
+            ybar = yrange - 2.0 * ybarheight
             for i, person in enumerate(staff):              # Combine personal timetables into a rota
-                ybar = yrange - ybarheight * (3 + i)        # Bottom left of bar y coord.
+                ybar -= ybarheight                          # Bottom left of bar y coord.
+                ibar += 1
+                if ibar == nbars_group:
+                    ibar = 0
+                    yg = ybar + 0.7 * ybarheight
+                    ax.plot([xlim[0], xlim[1]], [yg, yg], color='grey', lw=2.5)
+                    ybar -= 0.5 * ybarheight
                 role_yesterday = ''
                 xon = xmin
                 for day, role_today in enumerate(person.timetable):
@@ -593,8 +607,9 @@ class ShiftPlan:
                         xon = x
                     role_yesterday = role_today
                 text = person.get_allocation_text()
-#                text = "{:s}{:4d}/{:d}".format(person.surname, person._get_allocated(), person.max_allocation)
-                ax.text(xmin, ybar, text, ha='right', va='bottom', color='black')
+                ax.text(xmin-1.0, ybar, text, ha='right', va='bottom', color='black')
+                bar = Rectangle((xmin-1.0, ybar), 1.0, 0.9 * ybarheight, fc=person.bar_colour, fill=True)
+                ax.add_patch(bar)
         filepath = './outputs/' + name
         fig.savefig(filepath)
         return
