@@ -66,20 +66,26 @@ class Person:
         return -1
 
     def _schedule(self, rota, **kwargs):
-        """ Schedule this person in the rota. """
+        """ Schedule this person in the rota.  The start day of any allocation block is set to be a Tuesday
+        or Friday to help with badging and travel.
+        """
         task = kwargs.get('task', None)
         forced = kwargs.get('forced', False)
 
         daily_slots = ShiftPlan.daily_slots
         n_rows, n_days = rota.shape
-        start_col, end_col, car_col = 0, n_days, -1
+        start_col, end_col, car_col = 0, n_days, -1     # Default - schedule all of commissioning
 
         if task != None:
-            car_col = int(task.t_start) - ShiftPlan.start_day
-            start_col = car_col - self.arrival_buffer
+            car_day = int(task.t_start)
+            car_col = car_day - ShiftPlan.start_day
+            start_day = car_day - self.arrival_buffer
+            start_md = ShiftPlan.getLastDow(mission_day=start_day,
+                                             dows=[1, 4])   # Force start on Tuesday or Friday
+            start_col = start_md - ShiftPlan.start_day
             end_col = car_col + self.departure_buffer + 1
-        self.contiguously_allocated = 0
 
+        self.contiguously_allocated = 0
         for col in range(start_col, end_col):
             n_slots = daily_slots[col]
             current_role = self.timetable[col]
@@ -92,10 +98,10 @@ class Person:
             if (not forced and not is_busy) or (forced and is_forced):
                 need_rest = self.contiguously_allocated >= self.max_contiguous_allocation
                 if need_rest:
-                    rest_days = 4
+                    rest_days = 0
                     n_allocated = self._get_allocated()
                     if n_allocated + rest_days < self.max_allocation:    # maybe go home..
-                        self.timetable[col:col + rest_days + 1] = Person.resting
+                        self.timetable[col:col + rest_days] = Person.resting
                         self.contiguously_allocated = 0
                 else:
                     n_allocated = self._get_allocated()

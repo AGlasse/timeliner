@@ -25,7 +25,7 @@ class CarUtils:
         for line in line_list[1:]:
             tokens = line.split(',')
             if len(tokens) > 3:
-                ng_id, idt_id, pid, obs_list, tag, title = (token.strip() for token in tokens[0:7])
+                ng_id, idt_id, pid, obs_list, tag, title = (token.strip() for token in tokens[0:6])
                 miri_car_ids.append([ng_id, idt_id, pid, obs_list, tag, title])
         return np.asarray(miri_car_ids)
 
@@ -68,11 +68,14 @@ class CarUtils:
                         miri_ng_id = miri_ng_id.replace('?', wc)
                         idt_id = idt_id.replace('?', wc)
                     pid_id = miri_car_id[2]
+                    apt_obs = miri_car_id[3]
                     label = miri_car_id[4]
                     title = token_list[2]
                     tstart = CarUtils._decode_time(token_list[3:5], 'day')
                     tdur_hr = CarUtils._decode_time(token_list[5:7], 'hr')
-                    car = Car(cawg_row, idt_id, label, title, miri_ng_id, pid_id, tstart=tstart, tdur_hr=tdur_hr)
+                    car = Car(cawg_row, idt_id, label, title, miri_ng_id,
+                              pid_id, apt_obs,
+                              tstart=tstart, tdur_hr=tdur_hr)
                     raw_car_list.append(car)
                     break
         return raw_car_list
@@ -91,14 +94,14 @@ class CarUtils:
         ng_renames = {}         # eg {'74.4': '74.6'}
         idt_renames = {}        # eg {'88': 'MIR-011.1', '88.01': 'MIR-011.2'}
         removes = ['882.2', '76.2',
-                   '774.1', '774.2', '774.4',                       # Non-MIRI FGS-017
-                   '88.1'   # MIR-011.1, moved to be run after MIR-076
+                   '774.1', '774.2', '774.4',                       # Non-MIRI parts of FGS-017
                   ]
 
         durations = []          # eg [('MIR-005.1', 5.0)]
-        add_afters = [(Car(-1, 'MIR-011.1', 'Phot zero pts.', 'Photometric zero points', '88.1', '1027',
-                           tstart=-1.0, tdur=1.0), 'MIR-076')
-                      ]
+        add_afters = [] #(Car(-1, 'MIR-011.1', 'Phot zero pts.', 'Photometric zero points',
+                        #   '88.1', '1027', 'All',
+                        #   tstart=-1.0, tdur=1.0), 'MIR-076')
+                      #]
         add_befores = []  # eg [(Car(-1, 'MIR-005.8', 'Anneal 8', 'Anneal before MIR-061', '74.8', '1023')]
 
         combines = [('MIR-082',                     # Combined CAR name
@@ -154,7 +157,6 @@ class CarUtils:
                     if car.ng_id in ero[0]:       # Filter out NRC ERO CARs with identical ng_id
                         if car.title in ero[1]:
                             out_cars.append(car)
-
                 if car.ng_id in patch_names:
                     new_label = patch_names[car.ng_id]
                     fmt = "{:>6d},{:>10s},Non-CAWG change.  In {:s}, change label from {:s} -> {:s}"

@@ -1,14 +1,14 @@
-      ,  CAR_ID,   PID,ObsList,Short Title,Title
-9.1,    NG-9.1,   RTC,       ,ICDH On I,ICDH Power On and initialization (Part 1)
-9.2,    NG-9.2,   RTC,       ,ICDH On II,ICDH power On and initialization (pt 2: Loads & Ver
-18.1,  NG-18.1,   RTC,       ,ICE On I,MIRI ICE Power ON and Initialization
-18.2,  NG-18.2, RTC,       ,ICE On II,MIRI ICE Power ON and Initialization
-19,   MIR-042.1,  RTC,      ,CCC open,MIRI CCC Unlock and Opening
-37,   MIR-042.3,RTC,       ,CCC close,MIRI CCC Closure
-61,     NG-61,   RTC,       ,CCE On,CCE Power ON and Transition to State 2 (Internal De
-69.1,OTE-28.2,1165,5,Pre-MIMF 2 \n PSF check,Pre-MIMF 2 in focus PSF check
-84,OTE-29,1166,78.79.80.81.82,MIMF 2,MIMF measurement 2
-73,    MIR-004,1012,All,Cal lamps,MIRI Calibration Lamp Operation
+NG-ID,CAR_ID,    PID,ObsList,Short Title,Title
+9.1,  NG-9.1,    RTC,       ,ICDH On I,ICDH Power On and initialization (Part 1)
+9.2,  NG-9.2,    RTC,       ,ICDH On II,ICDH power On and initialization (pt 2: Loads & Ver
+18.1, NG-18.1,   RTC,       ,ICE On I,MIRI ICE Power ON and Initialization
+18.2, NG-18.2,   RTC,       ,ICE On II,MIRI ICE Power ON and Initialization
+19,   MIR-042.1, RTC,      ,CCC open,MIRI CCC Unlock and Opening
+37,   MIR-042.3, RTC,       ,CCC close,MIRI CCC Closure
+61,   NG-61,     RTC,       ,CCE On,CCE Power ON and Transition to State 2 (Internal De
+69.1, OTE-28.2, 1165,5,Pre-MIMF 2 \n PSF check,Pre-MIMF 2 in focus PSF check
+84,   OTE-29,   1166,78.79.80.81.82,MIMF 2,MIMF measurement 2
+73,   MIR-004,  1012,All,Cal lamps,MIRI Calibration Lamp Operation
 74.1, MIR-005.1,1023,1.2,Anneal \n Verification,MIRI Detector Anneal (First Instance)
 74.2, MIR-005.2,1023,3.4,Anneal 2,Anneal after MIRI-004
 74.3, MIR-005.3,1023,5.6.7,Anneal 3,Anneal after MIR-060
@@ -70,7 +70,7 @@
 803.2,OTE-24.2, RTC,       ,Cooler IMA >S4,Cryocooler Image Motion Assessment - After Transiti
 804,  OTE-33,RTC,,Cooler IMA steady,CryoCooler Image Motion Assessment - Steady State
 805,  OTE-33,RTC,,Cooler f sweep,Cryocooler Mandatory Drive Frequency Sweep - Steady
-808,NG-808,RTC,,Slew to COLD’,Obs slew to cold
+808,NG-808,RTC,,Slew to COLD,Obs slew to cold
 812.1,MIR-073.1,1052,1.2.3,Sky bgd,MIRI Sky background variation with telescope pointi
 812.2,MIR-073.2,1052,4.5.6,Sky bgd,MIRI Sky background variation with telescope pointi
 813,  MIR-072,RTC,,Img pix flat,MIRI Imager Pixel Flat
@@ -84,12 +84,12 @@
 873,  MIR-077,1261,All,Bright source sens,MIRI Bright Source Sensitivity
 882,  MIR-078,1406,All,Coro TA,MIRI Coronagraphic Target Acquisition
 883,  MIR-076,1259,All,LRS dispersion,MIRI LRS Spectral Resolution and Dispersion Ratio
-887.1, MIR-042.4,    RTC,    ,POM htr on,Start MIRI POM Cooldown Operations
+887.1, MIR-042.4,    RTC,  ,POM htr on,Start MIRI POM Cooldown Operations
 887.2,MIR-042.6,RTC,       ,POM htr off,End MIRI POM Cooldown Operations
-904, MIR-080,RTC,          ,'JT AA Recovery','JT assisted anneals recovery'
-905, MIR-081,RTC,          ,'JT AA Jitter','MIRI JT Anneal //l with NIRCAM'
+904, MIR-080,RTC,          ,JT AA Recovery,'JT assisted anneals recovery'
+905, MIR-081,RTC,          ,JT AA Jitter,'MIRI JT Anneal //l with NIRCAM'
 906.?,MIR-082.?,RTC,,JT AA Final Config,MIRI JT Anneal Final Configuration
 924.1,MIR-065,1519,All,RSCD and\nNreset=1,Frame reset and RSCD
-ERO-1.1,ERO-1.1,TBD,All,'1st MIRI ERO','1st MIRI ERO Observation'
-NG-new,MIR-065,1546,All,'Frame reset + \nRSCD',NG-new
+ERO-1.1,ERO-1.1,TBD,All,1st MIRI ERO,'1st MIRI ERO Observation'
+NG-new,MIR-065,1546,All,Frame reset + \nRSCD,NG-new
 END

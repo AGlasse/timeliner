@@ -28,7 +28,7 @@ class DataFlow:
         xy_origin = [xlim[0] + 50, ylim[1] - 100]
 
         # End of row CARS for 'All' case
-        car_breaks = ['MIR-007', 'MIR-050', 'MIR-017.3', 'MIR-077']
+        car_breaks = ['MIR-007', 'MIR-050', 'MIR-064.1', 'MIR-077']
 
         idx = DataFlow.col_dict[tgt_kdp_id]
         cols = DataFlow.cols_list[idx]
@@ -81,7 +81,7 @@ class DataFlow:
             y_key = Conduit.xy_origin[1]
 
             key.plot(ax, x_key, y_key)
-        fig.savefig('./outputs/dataflow_' + cawg_date + '_' + tgt_kdp_id + '.png')
+        fig.savefig('./outputs/dataflow_' + tgt_kdp_id + '.png')
         plot.clear()
         return
 

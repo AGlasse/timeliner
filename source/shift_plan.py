@@ -60,6 +60,22 @@ class ShiftPlan:
         return rota
 
     @staticmethod
+    def getLastDow(**kwargs):
+        md = kwargs.get('mission_day', None)          # Mission day
+        dows = kwargs.get('dows', [1, 4])             # Valid last days of week
+
+        md_monday = ShiftPlan.launchdoy_last_monday - ShiftPlan.launchdoy
+        dow = (md - md_monday) % 7
+        d = dow
+        while d > dow - 7:
+            is_valid = d in dows
+            if is_valid:
+                return md_monday + d
+            d -= 1
+            d = d if d >= 0 else 6
+        return None
+
+    @staticmethod
     def _ymd_to_doy(year, month, dom):
         doms = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         if year % 400 == 0:     # Trap leap years
@@ -129,8 +145,6 @@ class ShiftPlan:
     def _md_to_dom(md):
         """ Mission day to day of month """
         ldoy = ShiftPlan.launchdoy
-
-
         doy = ldoy + md
         doy_eoy = ShiftPlan._ymd_to_doy(ShiftPlan.launchyear, 12, 31)
         doy = doy if doy < doy_eoy else doy - doy_eoy

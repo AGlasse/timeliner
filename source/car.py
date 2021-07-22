@@ -10,7 +10,7 @@ class Car(Task):
     type = 'CAR'
     type_code = 'o'
 
-    def __init__(self, cawg_row, idt_id, label, title, ng_id, pid_id, **kwargs):
+    def __init__(self, cawg_row, idt_id, label, title, ng_id, pid_id, apt_obs, **kwargs):
         Task.__init__(self, idt_id, label, 'black')
 
         self.cawg_row = cawg_row
@@ -24,6 +24,7 @@ class Car(Task):
         self.next_outplug = 0.
         self.ng_id = ng_id
         self.pid_id = pid_id
+        self.apt_obs = apt_obs
         self.pid_tdur = 0.0
         self.title = title
         self.caplinks = []
