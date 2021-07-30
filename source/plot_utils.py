@@ -5,6 +5,7 @@
 """
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 
 class Plot:
@@ -25,6 +26,8 @@ class Plot:
         aspect = kwargs.get('aspect', 'auto')      # 'equal' for aspect = 1.0
         fontsize = kwargs.get('fontsize', 9)
 
+        gs = gridspec.GridSpec(nrows, ncols)
+        gs.update(wspace=0.03, hspace=0.05)
         plt.rcParams.update({'font.size': fontsize})
 
         sharex = xlim is not None
@@ -34,6 +37,7 @@ class Plot:
                                     squeeze=False)
         fig.patch.set_facecolor('white')
         fig.suptitle(title)
+        fig.tight_layout(pad=8.0)
 
         for i in range(0, nrows):
             for j in range(0, ncols):

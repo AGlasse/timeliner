@@ -14,7 +14,7 @@ from tools import Tools
 cawg_path = "./inputs/"
 cawg_date = "2021_03"
 #timeline_file = "2021June_Working_Commissioning_Timeline.csv"
-timeline_file = "2021June_MIR058_update.csv"
+timeline_file = "2021July_MIR005_3_update.csv"
 staff_file = "staff.csv"
 apt_data_file = "./inputs/apt_decoder_data.csv"
 car_obs_file = "./inputs/car_obs_table.csv"
@@ -40,7 +40,7 @@ KdpUtils.schedule_kdps()
 kdps = KdpUtils.kdps
 
 print()
-dataflow = True        # True = Replot dataflow diagrams
+dataflow = False        # True = Replot dataflow diagrams
 if dataflow:
     dataflow = DataFlow()
     dc_keys = DataFlow.col_dict.keys()

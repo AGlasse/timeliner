@@ -92,7 +92,7 @@ class CarUtils:
         """
         skip_rows = []          # eg [720] to skip row 720
         ng_renames = {}         # eg {'74.4': '74.6'}
-        idt_renames = {}        # eg {'88': 'MIR-011.1', '88.01': 'MIR-011.2'}
+        idt_renames = {'217.1': 'MIR-058.1', '217.2': 'MIR-058.2'}        # eg {'88': 'MIR-011.1', '88.01': 'MIR-011.2'}
         removes = ['882.2', '76.2',
                    '774.1', '774.2', '774.4',                       # Non-MIRI parts of FGS-017
                   ]

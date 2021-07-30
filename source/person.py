@@ -75,13 +75,12 @@ class Person:
         daily_slots = ShiftPlan.daily_slots
         n_rows, n_days = rota.shape
         start_col, end_col, car_col = 0, n_days, -1     # Default - schedule all of commissioning
-
         if task != None:
             car_day = int(task.t_start)
             car_col = car_day - ShiftPlan.start_day
             start_day = car_day - self.arrival_buffer
             start_md = ShiftPlan.getLastDow(mission_day=start_day,
-                                             dows=[1, 4])   # Force start on Tuesday or Friday
+                                            dows=[1, 4])   # Force start on Tuesday or Friday
             start_col = start_md - ShiftPlan.start_day
             end_col = car_col + self.departure_buffer + 1
 

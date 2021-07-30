@@ -62,7 +62,7 @@ class ShiftPlan:
     @staticmethod
     def getLastDow(**kwargs):
         md = kwargs.get('mission_day', None)          # Mission day
-        dows = kwargs.get('dows', [1, 4])             # Valid last days of week
+        dows = kwargs.get('dows', [1, 4])             # Good start days of week (Tues/Fri)
 
         md_monday = ShiftPlan.launchdoy_last_monday - ShiftPlan.launchdoy
         dow = (md - md_monday) % 7
@@ -70,7 +70,8 @@ class ShiftPlan:
         while d > dow - 7:
             is_valid = d in dows
             if is_valid:
-                return md_monday + d
+                return md
+            md -= 1
             d -= 1
             d = d if d >= 0 else 6
         return None
@@ -400,7 +401,7 @@ class ShiftPlan:
         fig, axs = plot.set_plot_area('MIRI Shift Schedule',
                                       ncols=1, nrows=n_panes, fontsize=16)
 
-        y_pitch = (0.010, 0.015, 0.020)[n_panes-1] * yrange
+        y_pitch = (0.008, 0.012, 0.016)[n_panes-1] * yrange
         xorg = ShiftPlan.start_day
         xlm = ShiftPlan.launchdoy_last_monday - ShiftPlan.launchdoy
         for pane in range(0, n_panes):
@@ -460,13 +461,13 @@ class ShiftPlan:
         from car import Car
         import calendar
 
-        n_panes, xrange, yrange = 3, 70, 80         # Calendar; 3 panes, 80 rows, 70 days/plot
+        n_panes, xrange, yrange = 3, 70, 105         # Calendar; 3 panes, 105 rows, 70 days/plot
         fig, axs = ShiftPlan._plot_calendar_grid(n_panes, xrange, yrange)
 
         free = ShiftPlan.free
         n_slots, n_days = rota.shape
         xorg = ShiftPlan.start_day
-        yorg = 30                                   # Plot CARs above midline and rota below
+        yorg = 32                                   # Plot CARs above midline and rota below
         ybarheight = 2.0
         launch_phase = ShiftPlan.launchtime / 24.0  # Fraction of day
 
@@ -514,18 +515,21 @@ class ShiftPlan:
                             xon = x
                     on_yesterday = on_today
 
-            n_task_slots = 18
+            n_task_slots = 26
             ytaskheight = 2.5
             slot = 0
             cars = CarUtils.cars
+            caps = CapUtils.caps
             kdps = KdpUtils.kdps
-            tasks = ShiftPlan.merge_tasks(cars, kdps)
+            tasks = ShiftPlan.merge_tasks(cars, caps)
+            tasks = ShiftPlan.merge_tasks(tasks, kdps)
             for task in tasks:
                 xstart = task.t_start + launch_phase
                 xend = task.get_t_end() + launch_phase
                 ytask = yorg + ytaskheight * (slot + 1)
-                text = task.idt_id + ', ' + task.label
-                colour = 'black'
+                label = ShiftPlan.strip_line_feeds(task.label)
+                text = task.idt_id + ', ' + label
+                colour = 'green' if task.type == 'CAP' else 'black'
                 ax.text(xstart, ytask, text, color=colour)
                 ax.plot([xstart, xend], [ytask-0.2, ytask-0.2], color='red')
                 ylo = ylim[1]
@@ -543,6 +547,14 @@ class ShiftPlan:
         filepath = './outputs/' + filename + '.png'
         fig.savefig(filepath)
         return
+
+    @staticmethod
+    def strip_line_feeds(text):
+        tokens = text.split('\n')
+        text = ''
+        for token in tokens:
+            text += token
+        return text
 
     @staticmethod
     def merge_tasks(tasks1, tasks2):
