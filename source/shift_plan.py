@@ -60,98 +60,6 @@ class ShiftPlan:
         return rota
 
     @staticmethod
-    def getLastDow(**kwargs):
-        md = kwargs.get('mission_day', None)          # Mission day
-        dows = kwargs.get('dows', [1, 4])             # Good start days of week (Tues/Fri)
-
-        md_monday = ShiftPlan.launchdoy_last_monday - ShiftPlan.launchdoy
-        dow = (md - md_monday) % 7
-        d = dow
-        while d > dow - 7:
-            is_valid = d in dows
-            if is_valid:
-                return md
-            md -= 1
-            d -= 1
-            d = d if d >= 0 else 6
-        return None
-
-    @staticmethod
-    def _ymd_to_doy(year, month, dom):
-        doms = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-        if year % 400 == 0:     # Trap leap years
-            doms[2] = 29
-        doy = 0
-        for mm in range(0, month):
-            doy += doms[mm]
-        return doy + dom
-
-    @staticmethod
-    def _doy_to_ymd(year, doy):
-
-        doms = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-        if year % 400 == 0:     # Trap leap years
-            doms[2] = 29
-        day = doy
-        for month, dom in enumerate(doms):
-            if day <= dom:
-                return year, month, day
-            day -= dom
-        return None
-
-    @staticmethod
-    def _ymd_to_md(year, month, day):
-        """ Calculate the number of days after launch
-        :param year:
-        :param month:
-        :param day:
-        :return: mission day (L + md)
-        """
-        doy = ShiftPlan._ymd_to_doy(year, month, day)
-        if year > 2021:
-            endof2021 = ShiftPlan._ymd_to_doy(2021, 12, 31)
-            doy += endof2021
-        mission_day = doy - ShiftPlan.launchdoy
-        return mission_day
-
-    @staticmethod
-    def _md_to_ymd(mission_day):
-        """ Calculate the number of days after launch
-        :param mission day (L + md)
-        :return: year, month, day:
-        """
-        doy = mission_day + ShiftPlan.launchdoy
-        endof2021 = ShiftPlan._ymd_to_doy(2021, 12, 31)
-        year = 2021
-        if doy > endof2021:
-            doy -= endof2021
-            year = 2022
-        ymd = ShiftPlan._doy_to_ymd(year, doy)
-        return ymd
-
-    @staticmethod
-    def _md_to_doy(md):
-        """ Mission day to day of year """
-        ldoy = ShiftPlan.launchdoy
-        doy = ldoy + md
-        year = ShiftPlan.launchyear
-        doy_eoy = ShiftPlan._ymd_to_doy(year, 12, 31)
-        if doy > doy_eoy:
-            doy -= doy_eoy
-            year += 1
-        doy = doy if doy < doy_eoy else doy - doy_eoy
-        return year, doy
-
-    @staticmethod
-    def _md_to_dom(md):
-        """ Mission day to day of month """
-        ldoy = ShiftPlan.launchdoy
-        doy = ldoy + md
-        doy_eoy = ShiftPlan._ymd_to_doy(ShiftPlan.launchyear, 12, 31)
-        doy = doy if doy < doy_eoy else doy - doy_eoy
-        return doy
-
-    @staticmethod
     def _decode_period_token(token):
         """ Create an array containing the index (column number) of the day in the rota
         object from a period date token (format 'yyyymmdd:yyyymmdd').
@@ -166,8 +74,8 @@ class ShiftPlan:
                     md_start = int(t[1:5])
                     md_end = int(t[7:11])
                 else:
-                    md_start = ShiftPlan._ymd_to_md(int(t[0:4]), int(t[4:6]), int(t[6:8]))
-                    md_end = ShiftPlan._ymd_to_md(int(t[9:13]), int(t[13:15]), int(t[15:17]))
+                    md_start = ShiftPlan._ymd_to_md(2000 + int(t[0:2]), int(t[2:4]), int(t[4:6]))
+                    md_end = ShiftPlan._ymd_to_md(2000 + int(t[7:9]), int(t[9:11]), int(t[11:13]))
                 for md in np.arange(md_start, md_end + 1):
                     day_idx = md - ShiftPlan.start_day
                     days.append(day_idx)
@@ -197,10 +105,11 @@ class ShiftPlan:
                     ident = initial, forename, surname, email, organisation
                     max_nweeks, max_nweeks_block  = (int(token.strip()) for token in tokens[5:7])
                     blackout_days = ShiftPlan._decode_period_token(tokens[7])
-                    scheduled_days = ShiftPlan._decode_period_token(tokens[8])
-                    availability = is_reserve, max_nweeks, max_nweeks_block, blackout_days, scheduled_days
+                    greyout_days = ShiftPlan._decode_period_token(tokens[8])
+                    scheduled_days = ShiftPlan._decode_period_token(tokens[9])
+                    availability = is_reserve, max_nweeks, max_nweeks_block, blackout_days, greyout_days, scheduled_days
                     person = Person(ident, availability)
-                    for token in tokens[9:]:
+                    for token in tokens[10:]:
                         idt_id = token.strip()
                         if len(idt_id) > 2:
                             task, err_msg = CapUtils.get_cap(idt_id)
@@ -391,15 +300,17 @@ class ShiftPlan:
         return None
 
     @staticmethod
-    def _plot_calendar_grid(n_panes, xrange, yrange):
+    def _plot_calendar_grid(n_panes, xrange, yrange, **kwargs):
         from plot_utils import Plot
         import calendar
         import datetime
 
+        plotpad = kwargs.get('plotpad', 8.0)
         launch_phase = ShiftPlan.launchtime / 24.0        # Fraction of day
         plot = Plot()
         fig, axs = plot.set_plot_area('MIRI Shift Schedule',
-                                      ncols=1, nrows=n_panes, fontsize=16)
+                                      ncols=1, nrows=n_panes, fontsize=16,
+                                      plotpad=plotpad)
 
         y_pitch = (0.008, 0.012, 0.016)[n_panes-1] * yrange
         xorg = ShiftPlan.start_day
@@ -581,7 +492,7 @@ class ShiftPlan:
         name = kwargs.get('name', 'staff_schedule.png')
 
         n_panes, xrange, yrange = 2, 105, 120
-        fig, axs = ShiftPlan._plot_calendar_grid(n_panes, xrange, yrange)
+        fig, axs = ShiftPlan._plot_calendar_grid(n_panes, xrange, yrange, plotpad=15.0)
         xorg = ShiftPlan.start_day
 
         staff = ShiftPlan.staff
@@ -621,7 +532,7 @@ class ShiftPlan:
                                 colour = Tools.colours[icol]
                                 if role_yesterday == person.blackout:
                                     colour = 'black'
-                                if role_yesterday == person.resting:
+                                if role_yesterday == person.greyout:
                                     colour = 'grey'
                                 if role_yesterday == person.sme_role:
                                     colour = 'pink'
@@ -639,3 +550,95 @@ class ShiftPlan:
         filepath = './outputs/' + name
         fig.savefig(filepath)
         return
+
+    @staticmethod
+    def getLastDow(**kwargs):
+        md = kwargs.get('mission_day', None)          # Mission day
+        dows = kwargs.get('dows', [1, 4])             # Good start days of week (Tues/Fri)
+
+        md_monday = ShiftPlan.launchdoy_last_monday - ShiftPlan.launchdoy
+        dow = (md - md_monday) % 7
+        d = dow
+        while d > dow - 7:
+            is_valid = d in dows
+            if is_valid:
+                return md
+            md -= 1
+            d -= 1
+            d = d if d >= 0 else 6
+        return None
+
+    @staticmethod
+    def _ymd_to_doy(year, month, dom):
+        doms = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        if year % 400 == 0:     # Trap leap years
+            doms[2] = 29
+        doy = 0
+        for mm in range(0, month):
+            doy += doms[mm]
+        return doy + dom
+
+    @staticmethod
+    def _doy_to_ymd(year, doy):
+
+        doms = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+        if year % 400 == 0:     # Trap leap years
+            doms[2] = 29
+        day = doy
+        for month, dom in enumerate(doms):
+            if day <= dom:
+                return year, month, day
+            day -= dom
+        return None
+
+    @staticmethod
+    def _ymd_to_md(year, month, day):
+        """ Calculate the number of days after launch
+        :param year:
+        :param month:
+        :param day:
+        :return: mission day (L + md)
+        """
+        doy = ShiftPlan._ymd_to_doy(year, month, day)
+        if year > 2021:
+            endof2021 = ShiftPlan._ymd_to_doy(2021, 12, 31)
+            doy += endof2021
+        mission_day = doy - ShiftPlan.launchdoy
+        return mission_day
+
+    @staticmethod
+    def _md_to_ymd(mission_day):
+        """ Calculate the number of days after launch
+        :param mission day (L + md)
+        :return: year, month, day:
+        """
+        doy = mission_day + ShiftPlan.launchdoy
+        endof2021 = ShiftPlan._ymd_to_doy(2021, 12, 31)
+        year = 2021
+        if doy > endof2021:
+            doy -= endof2021
+            year = 2022
+        ymd = ShiftPlan._doy_to_ymd(year, doy)
+        return ymd
+
+    @staticmethod
+    def _md_to_doy(md):
+        """ Mission day to day of year """
+        ldoy = ShiftPlan.launchdoy
+        doy = ldoy + md
+        year = ShiftPlan.launchyear
+        doy_eoy = ShiftPlan._ymd_to_doy(year, 12, 31)
+        if doy > doy_eoy:
+            doy -= doy_eoy
+            year += 1
+        doy = doy if doy < doy_eoy else doy - doy_eoy
+        return year, doy
+
+    @staticmethod
+    def _md_to_dom(md):
+        """ Mission day to day of month """
+        ldoy = ShiftPlan.launchdoy
+        doy = ldoy + md
+        doy_eoy = ShiftPlan._ymd_to_doy(ShiftPlan.launchyear, 12, 31)
+        doy = doy if doy < doy_eoy else doy - doy_eoy
+        return doy

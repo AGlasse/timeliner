@@ -11,11 +11,12 @@ class Person:
     resting = 'r'           # In Baltimore but not schedulable for >7 days contiguously
     free = '.'              # Not schedulable
     blackout = 'x'          # Person is not available in Baltimore
+    greyout = '+'           # Person not required on shift (set by Alistair)
     sme_role = '!'          # Scheduled to be present on console for a specific CAR execution
 
     def __init__(self, idents, availabilty):
         self.initial, self.forename, self.surname, self.email, self.organisation = idents
-        self.is_reserve, max_nweeks, max_nweeks_block, self.blackout_days, schedule_days = availabilty
+        self.is_reserve, max_nweeks, max_nweeks_block, self.blackout_days, self.greyout_days, schedule_days = availabilty
         self.fg_colour = 'black'
         self.max_allocation = 7 * max_nweeks
         self.max_contiguous_allocation = 7 * max_nweeks_block
@@ -24,6 +25,9 @@ class Person:
         for day in self.blackout_days:
             if 0 <= day < ShiftPlan.n_days - 1:      # Clip days outside commissioning period
                 self.timetable[day] = Person.blackout
+        for day in self.greyout_days:
+            if 0 <= day < ShiftPlan.n_days - 1:
+                self.timetable[day] = Person.greyout
         for day in schedule_days:
             if 0 <= day < ShiftPlan.n_days - 1:
                 self.timetable[day] = Person.on_console
@@ -90,9 +94,11 @@ class Person:
             current_role = self.timetable[col]
             is_forced = current_role == Person.on_console   # Force scheduled busy or not
             is_resting = current_role == Person.resting
-            is_blackout = current_role == Person.blackout
+            is_blackout = current_role == Person.blackout   # Person says they're unavailable
+            is_greyout = current_role == Person.greyout     # Alistair says they're not needed
+            is_unavailable = is_blackout or is_greyout
             is_sme = current_role == Person.sme_role
-            is_busy = is_resting or is_blackout or is_sme
+            is_busy = is_resting or is_unavailable or is_sme
 
             if (not forced and not is_busy) or (forced and is_forced):
                 need_rest = self.contiguously_allocated >= self.max_contiguous_allocation
