@@ -17,13 +17,11 @@ class ShiftPlan:
     """
     month_names = ['January', 'February', 'March', 'April', 'May', 'June',
                    'Jul', 'Aug', 'Sep', 'Oct', 'November', 'December']
-    launchyear, launchmonth, launchdate, launchtime = 2021, 11, 25, 11.00
+    launchyear, launchmonth, launchdate, launchhour = 2021, 11, 25, 11.00
     launchdate_last_monday = 22
     start_day, end_day = -5, 200
     n_days = end_day - start_day + 1
     console_rota = []
-    n_slots_max = 15            # Maximum number of personnel scheduled per day
-    n_slots_min = 10        # Minimum number for 4.2 shifts per person per week
     free = None
 
     def __init__(self, **kwargs):
@@ -43,43 +41,57 @@ class ShiftPlan:
     @staticmethod
     def create_rota():
         """ Create the rota array which holds Person objects for all daily slots, and
-        a daily_slots array which contains the number of people required each day (this
+        a daily_slot_quota array which contains the number of people required each day (this
         can be greater/less than the baseline 10 in periods of peak/low activity).
         """
         n_days = ShiftPlan.n_days
-        n_slots_min = ShiftPlan.n_slots_min
-        n_slots_max = ShiftPlan.n_slots_max
-        rota = np.full((n_slots_max, n_days), None)         # Create empty rota
-        daily_slots = np.full((n_days), n_slots_min)  # Count of slots on each day
-        peak_days = [[90, 100], [152, 165]]
-        for days in peak_days:
-            col1 = days[0] - ShiftPlan.start_day
-            col2 = days[1] - ShiftPlan.start_day
-            daily_slots[col1:col2+1] = n_slots_max
-        ShiftPlan.daily_slots = daily_slots
+        n_slots_max = 15
+        n_slots_nominal = 10       #ShiftPlan.n_slots_peak               # More slots for peak stress
+        daily_slot_quota = np.full((n_days), n_slots_nominal)        # Count of slots on each day
+        unusual_slots = [(-6, -2, 3), (90, 100, 15), (152, 165, 15)]
+        for uslot in unusual_slots:
+            col1 = uslot[0] - ShiftPlan.start_day
+            col2 = uslot[1] - ShiftPlan.start_day
+            col1 = col1 if col1 > 0 else 0
+            col2 = col2 if col2 < n_days else n_days - 1
+            daily_slot_quota[col1:col2+1] = uslot[2]
+        ShiftPlan.daily_slot_quota = daily_slot_quota
+        ShiftPlan.slots_filled = np.zeros(n_days)
+        rota = np.full((n_slots_max, n_days), None)        # Create empty rota
         return rota
 
     @staticmethod
-    def _decode_period_token(token):
-        """ Create an array containing the index (column number) of the day in the rota
-        object from a period date token (format 'yyyymmdd:yyyymmdd').
-        :param token: Date token.  eg '20211220:20220109'
-        :return:  Array of day indices in rota objects
+    def test_rota(rota):
+        """ Check rota statistics.
+        :param rota:
+        :return:
         """
-        days = []
-        if token != '':
-            tokens = token.split(';')
-            for t in tokens:
-                if t[0] == 'L':
-                    md_start = int(t[1:5])
-                    md_end = int(t[7:11])
-                else:
-                    md_start = ShiftPlan._ymd_to_md(2000 + int(t[0:2]), int(t[2:4]), int(t[4:6]))
-                    md_end = ShiftPlan._ymd_to_md(2000 + int(t[7:9]), int(t[9:11]), int(t[11:13]))
-                for md in np.arange(md_start, md_end + 1):
-                    day_idx = md - ShiftPlan.start_day
-                    days.append(day_idx)
-        return days
+        from person import Person
+
+        print("Testing MOC calendar")
+        daily_quota = ShiftPlan.daily_slot_quota
+        nslots, ndays = rota.shape
+        for day in range(0, ndays):
+            quota = daily_quota[day]
+            oc_counter = 0
+            an_counter = 0
+            for slot in range(0, nslots):
+                person = rota[slot, day]
+                if person != None:
+                    role = person.timetable[day]
+                    is_onconsole = role == Person.role_console
+                    is_sme_onconsole = role == Person.role_sme_console
+                    is_analyst = role == Person.role_analyst
+                    is_sme_analyst = role == Person.role_sme_analyst
+                    if is_onconsole or is_sme_onconsole:
+                        oc_counter += 1
+                    if is_analyst or is_sme_analyst:
+                        an_counter += 1
+            if quota != oc_counter:
+                fmt = "L+{:d}, on console slots filled/allocated = {:d}/{:d}, plus analyst = {:d}"
+                md = day + ShiftPlan.start_day
+                print(fmt.format(md, oc_counter, quota, an_counter))
+        return
 
     def read_staff(self):
         from cap_utils import CapUtils
@@ -107,11 +119,13 @@ class ShiftPlan:
                     blackout_days = ShiftPlan._decode_period_token(tokens[7])
                     greyout_days = ShiftPlan._decode_period_token(tokens[8])
                     scheduled_days = ShiftPlan._decode_period_token(tokens[9])
-                    availability = is_reserve, max_nweeks, max_nweeks_block, blackout_days, greyout_days, scheduled_days
+                    analysis_days = ShiftPlan._decode_period_token(tokens[10])
+                    availability = is_reserve, max_nweeks, max_nweeks_block, blackout_days, greyout_days, scheduled_days, analysis_days
                     person = Person(ident, availability)
-                    for token in tokens[10:]:
-                        idt_id = token.strip()
-                        if len(idt_id) > 2:
+                    for token in tokens[11:]:
+                        token = token.strip()
+                        if len(token) > 2:
+                            role, idt_id = token.split(':')
                             task, err_msg = CapUtils.get_cap(idt_id)
                             if task == None:
                                 task, err_msg = CarUtils.get_car(idt_id)
@@ -120,7 +134,7 @@ class ShiftPlan:
                             if task == None:
                                 print("Shift plan unable to find task {:s}".format(idt_id))
                             else:
-                                person.sme_tasks.append(task)
+                                person.sme_tasks.append((task, role))
                     staff.append(person)
         n_staff = len(staff)
         colours = Tools.get_colour_list(n_staff)
@@ -215,23 +229,23 @@ class ShiftPlan:
         return
 
     @staticmethod
-    def allocate_smes(rota):
+    def allocate_tasks(rota, task_type):
         from person import Person
-
         staff = ShiftPlan.staff
         for person in staff:        # Combine personal timetables into a rota
-            rota = person.schedule_smes(rota)
+            rota = person.schedule_tasks(rota, task_type)
         return rota
 
     @staticmethod
-    def allocate_scheduled(rota):
+    def allocate_prescheduled(rota):
+        """ Allocate the days in each person's timetable which are prescheduled to be on shift. """
         staff = ShiftPlan.staff
         for person in staff:
             rota = person.schedule_forced(rota)
         return rota
 
     @staticmethod
-    def allocate_non_smes(rota):
+    def allocate_remaining(rota):
         staff = ShiftPlan.staff
         for person in staff:
             rota = person.schedule_remaining(rota)
@@ -240,7 +254,7 @@ class ShiftPlan:
     @staticmethod
     def remove_singles(rota):
         n_rows, n_days = rota.shape
-        daily_slots = ShiftPlan.daily_slots
+        daily_slots = ShiftPlan.daily_slot_quota
         for row in range(0, n_rows):
             yesterday = rota[row, 0]
             count = 1
@@ -257,8 +271,7 @@ class ShiftPlan:
                                 print('{:s} already scheduled on day {:d}'.format(tomorrow.surname, col))
                             else:
                                 rota[row, col] = tomorrow
-                                tomorrow.timetable[col] = tomorrow.on_console
-                                tomorrow.contiguously_allocated += 1
+                                tomorrow.timetable[col] = tomorrow.role_console
                         count = 1
                 yesterday = today
         return rota
@@ -290,23 +303,13 @@ class ShiftPlan:
         return person_list
 
     @staticmethod
-    def get_available_person(excluded, n_days):
-        """ Get the next available person in the staff list. """
-        staff = ShiftPlan.staff
-        for person in staff:
-            if person.is_allocatable(n_days):
-                if person not in excluded:      # and person.is_allocatable():
-                    return person
-        return None
-
-    @staticmethod
     def _plot_calendar_grid(n_panes, xrange, yrange, **kwargs):
         from plot_utils import Plot
         import calendar
         import datetime
 
         plotpad = kwargs.get('plotpad', 8.0)
-        launch_phase = ShiftPlan.launchtime / 24.0        # Fraction of day
+        launch_phase = ShiftPlan.launchhour / 24.0        # Fraction of day
         plot = Plot()
         fig, axs = plot.set_plot_area('MIRI Shift Schedule',
                                       ncols=1, nrows=n_panes, fontsize=16,
@@ -324,29 +327,32 @@ class ShiftPlan:
             ylim = [0, yrange]
             ax.set_xlim(xlim)
             ax.set_ylim(ylim)
+            ax.get_xaxis().set_ticks([])
+            ax.get_yaxis().set_ticks([])
 
             # Plot daily grid lines, thicker at DOW = Monday at 0000 UT
             for x in range(xmin, xmax):
                 ax.plot([x, x], [ylim[0], ylim[1]], color='grey', lw=0.5)
 
-            while xlm < xmax:
+            while xlm < xmax:   # Label top axis with days of month and start of week
                 ax.plot([xlm, xlm], [ylim[0], ylim[1]], color='grey', lw=1.5)
                 year, doy = ShiftPlan._md_to_doy(xlm)
-                doy_text = '{:d}'.format(doy)
+                doy_text = "{:d}".format(doy)
                 ax.text(xlm+0.001*xrange, yrange - 2.0*y_pitch, doy_text, color='grey')
                 year, month, dom = ShiftPlan._doy_to_ymd(year, doy)
                 ax.text(xlm+0.001*xrange, yrange - y_pitch, 'Mon', color='grey')
                 if dom > 4:
-                    dom_text = '{:d}'.format(dom)
+                    dom_text = "{:d}".format(dom)
                     ax.text(xlm+0.001*xrange, yrange + 0.1*y_pitch, dom_text, color='blue')
                 xlm += 7
+
             xl = launch_phase
             ax.plot([xl, xl], [ylim[0], 1.01*yrange], color='blue', lw=1.5, ls='--')
             lyr, lmo = ShiftPlan.launchyear, ShiftPlan.launchmonth
-            lda, lti = ShiftPlan.launchdate, ShiftPlan.launchtime
+            lda, lti = ShiftPlan.launchdate, ShiftPlan.launchhour
             fmt = 'Launch on {:d}/{:d}/{:d}\nat {:5.2f} UT'
             launch_text = fmt.format(lyr, lmo, lda, lti)
-            ax.text(xl+0.001*xrange, yrange + y_pitch, launch_text, color='blue')
+            ax.text(xl+0.001*xrange, yrange + 0.1*y_pitch, launch_text, color='blue')
             year = ShiftPlan.launchyear
             month = ShiftPlan.launchmonth + 1
             is_more = True
@@ -362,6 +368,15 @@ class ShiftPlan:
                     year += 1
                     month = 1
                 is_more = xdom < ShiftPlan.n_days
+            xmd = xl                        # Align L+day text with launch phase
+            fmt = "L+{:d}"
+            while xmd < xmax:
+                md_text = fmt.format(int(xmd))
+                fmt = "+{:d}"
+                ax.text(xmd + 0.001 * xrange, yrange + 2.*y_pitch, md_text, color='green')
+                ax.text(xmd + 0.001 * xrange, -y_pitch, md_text, color='green')
+                ax.plot([xmd, xmd], [yrange, yrange - 2.0 * y_pitch], color='green', lw=1.0, ls='-')
+                xmd += 10
         return fig, axs
 
     @staticmethod
@@ -380,7 +395,7 @@ class ShiftPlan:
         xorg = ShiftPlan.start_day
         yorg = 32                                   # Plot CARs above midline and rota below
         ybarheight = 2.0
-        launch_phase = ShiftPlan.launchtime / 24.0  # Fraction of day
+        launch_phase = ShiftPlan.launchhour / 24.0  # Fraction of day
 
         for pane in range(0, n_panes):
             ax = axs[pane, 0]
@@ -411,11 +426,11 @@ class ShiftPlan:
                                     ax.add_patch(bar)
                                     bartext = on_yesterday.surname
                                     is_dark = Tools.is_dark(bar_colour)
-                                    text_colour = 'black'   #if is_dark else 'black'
+                                    text_colour = 'white' if is_dark else 'black'
                                     ax.text(xon, ybar, bartext,
                                             ha='left', va='bottom', color=text_colour)
                                     sme_tasks = on_yesterday.sme_tasks     # Plot SME tasks on timeline
-                                    for task in sme_tasks:
+                                    for task, role in sme_tasks:
                                         xstart = task.t_start + launch_phase
                                         ybarmid = ybar + 0.5 * ybarheight
                                         if xstart > xon and xstart < xoff:
@@ -460,6 +475,100 @@ class ShiftPlan:
         return
 
     @staticmethod
+    def plot_staff_schedules(**kwargs):
+        from matplotlib.patches import Polygon, Rectangle, Circle
+
+        name = kwargs.get('name', 'staff_schedule.png')
+
+        n_panes, xrange, yrange = 2, 105, 130
+        fig, axs = ShiftPlan._plot_calendar_grid(n_panes, xrange, yrange, plotpad=10.0)
+        xorg = ShiftPlan.start_day
+
+        staff = ShiftPlan.staff
+        ybarheight = 2.0
+
+        for pane in range(0, n_panes):
+            ax = axs[pane, 0]
+            xmin = xorg + xrange * pane
+            xmax = xmin + xrange
+            n_colours = len(Tools.colours)
+            xlim = [xmin, xmax]
+            ylim = [0, yrange]
+            ax.set_xlim(xlim)
+            ax.set_ylim(ylim)
+            nbars_group = 5                                 # Split into groups for readability
+            ibar = -1
+            ybar = yrange - 2.0 * ybarheight
+            for i, person in enumerate(staff):              # Combine personal timetables into a rota
+                ybar -= ybarheight                          # Bottom left of bar y coord.
+                ibar += 1
+                if ibar == nbars_group:
+                    ibar = 0
+                    yg = ybar + 0.7 * ybarheight
+                    ax.plot([xlim[0], xlim[1]], [yg, yg], color='grey', lw=2.5)
+                    ybar -= 0.5 * ybarheight
+                role_yesterday = ''
+                xon = xmin
+                for day, role_today in enumerate(person.timetable):
+                    x = day + xorg
+                    if role_today != role_yesterday or x == xmax:        # Draw the 'old' bar and start a new one
+                        if x >= xmin:
+                            xoff = x if x < xmax else xmax
+                            xw = xoff - xon
+                            if xw > 0 and role_yesterday != person.role_free:
+                                icol = i % n_colours            # Default bar colour
+                                colour = Tools.colours[icol]
+                                if role_yesterday == person.blackout:
+                                    colour = 'black'
+                                if role_yesterday == person.greyout:
+                                    colour = 'grey'
+                                if role_yesterday == person.role_console:
+                                    colour = 'dodgerblue'
+                                if role_yesterday == person.role_sme_console:
+                                    colour = 'blue'
+                                if role_yesterday == person.role_analyst:
+                                    colour = 'lightgreen'
+                                if role_yesterday == person.role_sme_analyst:
+                                    colour = 'green'
+                                if role_yesterday == person.role_kdp:
+                                    colour = 'orange'
+                                bar_args = {'angle': 0.0, 'fill': True, 'fc': colour, 'edgecolor': 'white'}
+                                bar = Rectangle((xon, ybar), xw, 0.9 * ybarheight, **bar_args)
+                                ax.add_patch(bar)
+                        xon = x
+                    role_yesterday = role_today
+                text = person.get_allocation_text()
+                ax.text(xmin-1.0, ybar, text, ha='right', va='bottom', color='black')
+                bar = Rectangle((xmin-1.0, ybar), 1.0, 0.9 * ybarheight, fc=person.bar_colour, fill=True)
+                ax.add_patch(bar)
+
+        filepath = './outputs/' + name
+        fig.savefig(filepath)
+        return
+
+    @staticmethod
+    def _decode_period_token(token):
+        """ Create an array containing the index (column number) of the day in the rota
+        object from a period date token (format 'yyyymmdd:yyyymmdd').
+        :param token: Date token.  eg '20211220:20220109'
+        :return:  Array of day indices in rota objects
+        """
+        days = []
+        if token != '':
+            tokens = token.split(';')
+            for t in tokens:
+                if t[0] == 'L':
+                    md_start = int(t[1:5])
+                    md_end = int(t[7:11])
+                else:
+                    md_start = ShiftPlan._ymd_to_md(2000 + int(t[0:2]), int(t[2:4]), int(t[4:6]))
+                    md_end = ShiftPlan._ymd_to_md(2000 + int(t[7:9]), int(t[9:11]), int(t[11:13]))
+                for md in np.arange(md_start, md_end + 1):
+                    day_idx = md - ShiftPlan.start_day
+                    days.append(day_idx)
+        return days
+
+    @staticmethod
     def strip_line_feeds(text):
         tokens = text.split('\n')
         text = ''
@@ -484,72 +593,6 @@ class ShiftPlan:
         if task2 not in tasks:
             tasks.append(task2)
         return tasks
-
-    @staticmethod
-    def plot_staff_schedules(**kwargs):
-        from matplotlib.patches import Polygon, Rectangle, Circle
-
-        name = kwargs.get('name', 'staff_schedule.png')
-
-        n_panes, xrange, yrange = 2, 105, 120
-        fig, axs = ShiftPlan._plot_calendar_grid(n_panes, xrange, yrange, plotpad=15.0)
-        xorg = ShiftPlan.start_day
-
-        staff = ShiftPlan.staff
-        ybarheight = 2.0
-
-        for pane in range(0, n_panes):
-            ax = axs[pane, 0]
-            xmin = xorg + xrange * pane
-            xmax = xmin + xrange
-            n_colours = len(Tools.colours)
-            xlim = [xmin, xmax]
-            ylim = [0, yrange]
-            ax.set_xlim(xlim)
-            ax.set_ylim(ylim)
-            ax.get_yaxis().set_ticks([])
-            nbars_group = 5                                 # Split into groups for readability
-            ibar = -1
-            ybar = yrange - 2.0 * ybarheight
-            for i, person in enumerate(staff):              # Combine personal timetables into a rota
-                ybar -= ybarheight                          # Bottom left of bar y coord.
-                ibar += 1
-                if ibar == nbars_group:
-                    ibar = 0
-                    yg = ybar + 0.7 * ybarheight
-                    ax.plot([xlim[0], xlim[1]], [yg, yg], color='grey', lw=2.5)
-                    ybar -= 0.5 * ybarheight
-                role_yesterday = ''
-                xon = xmin
-                for day, role_today in enumerate(person.timetable):
-                    x = day + xorg
-                    if role_today != role_yesterday or x == xmax:        # Draw the 'old' bar and start a new one
-                        if x >= xmin:
-                            xoff = x if x < xmax else xmax
-                            xw = xoff - xon
-                            if xw > 0 and role_yesterday != person.free:
-                                icol = i % n_colours            # Default bar colour
-                                colour = Tools.colours[icol]
-                                if role_yesterday == person.blackout:
-                                    colour = 'black'
-                                if role_yesterday == person.greyout:
-                                    colour = 'grey'
-                                if role_yesterday == person.sme_role:
-                                    colour = 'pink'
-                                if role_yesterday == person.on_console:
-                                    colour = 'green'
-                                bar_args = {'angle': 0.0, 'fill': True, 'fc': colour, 'edgecolor': 'white'}
-                                bar = Rectangle((xon, ybar), xw, 0.9 * ybarheight, **bar_args)
-                                ax.add_patch(bar)
-                        xon = x
-                    role_yesterday = role_today
-                text = person.get_allocation_text()
-                ax.text(xmin-1.0, ybar, text, ha='right', va='bottom', color='black')
-                bar = Rectangle((xmin-1.0, ybar), 1.0, 0.9 * ybarheight, fc=person.bar_colour, fill=True)
-                ax.add_patch(bar)
-        filepath = './outputs/' + name
-        fig.savefig(filepath)
-        return
 
     @staticmethod
     def getLastDow(**kwargs):

@@ -7,21 +7,23 @@ class Person:
 
     arrival_buffer = 3      # Arrive in Baltimore at least 3 days before task
     departure_buffer = 1    # Leave at least 1 day after
-    on_console = 'o'        # Supporting one of the three shifts on this day
-    resting = 'r'           # In Baltimore but not schedulable for >7 days contiguously
-    free = '.'              # Not schedulable
-    blackout = 'x'          # Person is not available in Baltimore
-    greyout = '+'           # Person not required on shift (set by Alistair)
-    sme_role = '!'          # Scheduled to be present on console for a specific CAR execution
+    role_console = 'm'   # Supporting one of the three shifts on this day
+    role_sme_console = 'M'
+    role_free = '.'         # Not schedulable
+    blackout = 'X'          # Person is not available in Baltimore
+    greyout = 'x'           # Person not required on shift (set by Alistair)
+    role_analyst = 'a'      # In Baltimore but not on shift (Analysis or support role)
+    role_sme_analyst = 'A'  # Analyst for a CAR running on this day
+    role_kdp = 'K'          # Supporting a KDP on this day
 
     def __init__(self, idents, availabilty):
         self.initial, self.forename, self.surname, self.email, self.organisation = idents
-        self.is_reserve, max_nweeks, max_nweeks_block, self.blackout_days, self.greyout_days, schedule_days = availabilty
+        self.is_reserve, max_nweeks, max_nweeks_block, self.blackout_days, self.greyout_days, schedule_days, analysis_days = availabilty
         self.fg_colour = 'black'
         self.max_allocation = 7 * max_nweeks
         self.max_contiguous_allocation = 7 * max_nweeks_block
         self.contiguously_allocated = 0
-        self.timetable = np.full(ShiftPlan.n_days, Person.free)
+        self.timetable = np.full(ShiftPlan.n_days, Person.role_free)
         for day in self.blackout_days:
             if 0 <= day < ShiftPlan.n_days - 1:      # Clip days outside commissioning period
                 self.timetable[day] = Person.blackout
@@ -30,7 +32,10 @@ class Person:
                 self.timetable[day] = Person.greyout
         for day in schedule_days:
             if 0 <= day < ShiftPlan.n_days - 1:
-                self.timetable[day] = Person.on_console
+                self.timetable[day] = Person.role_console
+        for day in analysis_days:
+            if 0 <= day < ShiftPlan.n_days - 1:
+                self.timetable[day] = Person.role_analyst
         self.sme_tasks = []
         return
 
@@ -45,9 +50,17 @@ class Person:
         """ Check if this person is available for MOC a shift on a specific day """
         status = self.timetable[day]
         is_blackout = status == Person.blackout
-        is_free = status == Person.free
+        is_free = status == Person.role_free
         is_available = is_free and not is_blackout
         return is_available
+
+    def _remove_from_rota(self, rota, col):
+        rota_column = rota[:, col]
+        for row, slot in enumerate(rota_column):
+            if slot != None and slot.initial == self.initial:
+                rota[row, col] = None
+                return rota
+        return rota
 
     def _get_allocated(self):
         """ Find the number of days currently allocated to this person to be available
@@ -55,93 +68,150 @@ class Person:
         """
         tt = self.timetable
         n_total = len(tt)
-        n_free = len(np.where(tt == self.free)[0])
+        n_free = len(np.where(tt == self.role_free)[0])
         n_blackout = len(np.where(tt == self.blackout)[0])
-        n_allocated = n_total - n_free - n_blackout
+        n_greyout = len(np.where(tt == self.greyout)[0])
+        n_allocated = n_total - (n_free + n_blackout + n_greyout)
         return n_allocated
 
-    def _find_free_row(self, rota_column, n_slots):
+    def _find_free_slot(self, rota, col, n_slots):
         """ Find the free row (slot) in a column of the rota.
         """
-        for row in range(0, n_slots):
-            slot = rota_column[row]
-            if slot == None or slot == self:  # Free or this person already scheduled
-                return row
-        return -1
+        for slot in range(0, n_slots):
+            person = rota[slot, col]
+            if person == None or person == self:    # Free or this person already scheduled
+                return slot
+        return None                             # Free row not found
 
-    def _schedule(self, rota, **kwargs):
+    def schedule_tasks(self, rota, task_type):
+        """ Allocate this person to support all tasks in their sme list of a specific type
+        (task_type = 'CAR', 'CAP' etc.).
+        """
+        for task, role in self.sme_tasks:
+            if task.type == task_type:
+                rota = self._schedule_task(rota, task, role)
+        return rota
+
+    def _schedule_task(self, rota, task, requested_role):
         """ Schedule this person in the rota.  The start day of any allocation block is set to be a Tuesday
         or Friday to help with badging and travel.
         """
-        task = kwargs.get('task', None)
-        forced = kwargs.get('forced', False)
+        daily_slots = ShiftPlan.daily_slot_quota
+        car_day = int(task.t_start + ShiftPlan.launchhour/24.0)
+        car_col = car_day - ShiftPlan.start_day
+        start_day = car_day - self.arrival_buffer
+        start_md = ShiftPlan.getLastDow(mission_day=start_day,
+                                        dows=[1, 4])    # Force start on Tuesday or Friday
+        start_col = start_md - ShiftPlan.start_day
+        end_col = car_col + self.departure_buffer
+        if task.type == 'KDP':
+            start_col, end_col = car_col, car_col
 
-        daily_slots = ShiftPlan.daily_slots
-        n_rows, n_days = rota.shape
-        start_col, end_col, car_col = 0, n_days, -1     # Default - schedule all of commissioning
-        if task != None:
-            car_day = int(task.t_start)
-            car_col = car_day - ShiftPlan.start_day
-            start_day = car_day - self.arrival_buffer
-            start_md = ShiftPlan.getLastDow(mission_day=start_day,
-                                            dows=[1, 4])   # Force start on Tuesday or Friday
-            start_col = start_md - ShiftPlan.start_day
-            end_col = car_col + self.departure_buffer + 1
-
-        self.contiguously_allocated = 0
-        for col in range(start_col, end_col):
+        for col in range(start_col, end_col + 1):
+            md = col + ShiftPlan.start_day
             n_slots = daily_slots[col]
             current_role = self.timetable[col]
-            is_forced = current_role == Person.on_console   # Force scheduled busy or not
-            is_resting = current_role == Person.resting
             is_blackout = current_role == Person.blackout   # Person says they're unavailable
             is_greyout = current_role == Person.greyout     # Alistair says they're not needed
+            is_moc = current_role == Person.role_console
+            is_sme_moc = current_role == Person.role_sme_console
+
             is_unavailable = is_blackout or is_greyout
-            is_sme = current_role == Person.sme_role
-            is_busy = is_resting or is_unavailable or is_sme
-
-            if (not forced and not is_busy) or (forced and is_forced):
-                need_rest = self.contiguously_allocated >= self.max_contiguous_allocation
-                if need_rest:
-                    rest_days = 0
-                    n_allocated = self._get_allocated()
-                    if n_allocated + rest_days < self.max_allocation:    # maybe go home..
-                        self.timetable[col:col + rest_days] = Person.resting
-                        self.contiguously_allocated = 0
-                else:
-                    n_allocated = self._get_allocated()
-                    ok_total = n_allocated < self.max_allocation
-                    if ok_total:
-                        row = self._find_free_row(rota[:, col], n_slots)  # Find (any) free slot on day of CAR
-                        if row != -1:
-                            role = Person.sme_role if col == car_col else Person.on_console
-                            rota[row, col] = self
-                            self.timetable[col] = role
-                            self.contiguously_allocated += 1
-        return rota
-
-    def schedule_smes(self, rota):
-        """ Allocate this person to support a specific task.
-        """
-        for task in self.sme_tasks:
-            rota = self._schedule(rota, task=task)
+            if not is_unavailable:
+                role = current_role                             # Default is current role
+                n_allocated = self._get_allocated()             # Allocated full allowance?
+                ok_total = n_allocated < self.max_allocation
+                if ok_total:
+                    if task.type == 'CAP' or task.type == 'KDP':    # Requested task for this day
+                        if is_moc or is_sme_moc:                # Currently scheduled to be on console. Flag discrepancy
+#                            role_text = ' as SME' if is_sme_moc else ''
+#                            fmt = "L+{:d} {:s} is allocated{:s} in MOC, but requests CAP/KDP support for {:s}"
+#                            text = fmt.format(md, self.surname, role_text, task.idt_id)
+                            if task.type == 'KDP':              # Prioritise over MOC activities.
+#                                text += ' - Setting role to KDP support'
+                                role = Person.role_kdp
+                            else:
+                                if col == car_col:
+#                                    text += ' - Setting role to SME analyst'
+                                    role = Person.role_sme_analyst
+                                else:
+#                                    text += ' - Setting role to analyst'
+                                    role = Person.role_analyst
+                            rota = self._remove_from_rota(rota, col)
+#                            print(text)
+                        else:
+#                            fmt = "L+{:d} {:s} requests CAP/KDP support for {:s}"
+#                            text = fmt.format(car_md, self.surname, task.idt_id)
+                            if task.type == 'KDP':
+#                                text += ' - Setting role to KDP support'
+                                role = Person.role_kdp
+                            else:
+#                                text += ' - Setting role to analyst'
+                                role = Person.role_analyst          # Add to timetable (not rota)
+#                            print(text)
+                    else:   # Its a CAR. May support as an SME analyst (not in rota)
+                        if requested_role == 'A':
+                            if is_moc or is_sme_moc:    # Currently assigned to be in MOC
+#                                role_text = ' as SME' if is_sme_moc else ''
+#                                fmt = "L+{:d} {:s} is allocated{:s} in MOC, but requests analyst support for {:s}"
+#                                text = fmt.format(md, self.surname, role_text, task.idt_id)
+                                role = Person.role_analyst
+                                if col == car_col:
+                                    role = Person.role_sme_analyst
+#                                text += ' - Removing from rota and setting role to SME analyst'
+                                rota = self._remove_from_rota(rota, col)
+#                                print(text)
+                            else:
+                                role = Person.role_analyst
+                        else:   # Requested role is in MOC
+                            if is_moc or is_sme_moc:    # Already allocated in MOC
+#                                role_text = ' as SME' if is_sme_moc else ''
+#                                fmt = "L+{:d} {:s} is allocated{:s} in MOC, and is requesting MOC role for {:s}"
+#                                text = fmt.format(md, self.surname, role_text, task.idt_id)
+                                role = Person.role_sme_console if col == car_col else Person.role_console
+#                                print(text)
+                            else:
+                                role = Person.role_console    # Default role for CARs
+                                row = self._find_free_slot(rota, col, n_slots)  # Find free slot in rota
+                                if row is not None:
+                                    if col == car_col:
+                                        role = Person.role_sme_console
+                                    rota[row, col] = self       # Allocate CARs on rota.
+                self.timetable[col] = role              # Allocate all tasks in personal timetable
         return rota
 
     def schedule_forced(self, rota):
-        """ Schedule 'forced' (scheduled) dates """
-        rota = self._schedule(rota, forced=True)
+        """ Allocate this person into the rota on the days when they are prescheduled to be
+        on shift in their timetable. """
+        daily_slots = ShiftPlan.daily_slot_quota
+        n_rows, n_days = rota.shape
+        start_col, end_col, car_col = 0, n_days, -1         # Default - schedule all of commissioning
+        for col in range(start_col, end_col):
+            n_slots = daily_slots[col]
+            if self.timetable[col] == Person.role_console:
+                row = self._find_free_slot(rota, col, n_slots)  # Find free slot in rota
+                if row is not None:
+                    rota[row, col] = self
         return rota
 
     def schedule_remaining(self, rota):
-        """ Schedule remaining allocation to rota """
-        rota = self._schedule(rota)
+        """ Schedule remaining allocation for this person to be on console rota """
+        daily_slots = ShiftPlan.daily_slot_quota
+        n_rows, n_days = rota.shape
+        start_col, end_col, car_col = 0, n_days, -1                     # Default - schedule all of commissioning
+        for col in range(start_col, end_col):
+            n_slots = daily_slots[col]
+            current_role = self.timetable[col]
+            is_free = current_role == Person.role_free
+            if is_free:
+                n_allocated = self._get_allocated()                     # Allocated full allowance?
+                ok_total = n_allocated < self.max_allocation
+                if ok_total:
+                    row = self._find_free_slot(rota, col, n_slots)    # Find free slot in rota
+                    if row is not None:
+                        rota[row, col] = self
+                        self.timetable[col] = Person.role_console
         return rota
-
-    def is_allocatable(self, n_days):
-        """ Return True if the number of days is less than the remaining budget """
-        n_allocated = self._get_allocated()
-        is_allocatable = n_allocated + n_days < self.max_allocation
-        return is_allocatable
 
     @staticmethod
     def get_header_string(**kwargs):
