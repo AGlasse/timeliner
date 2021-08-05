@@ -5,9 +5,9 @@ from shift_plan import ShiftPlan
 
 class Person:
 
-    arrival_buffer = 3      # Arrive in Baltimore at least 3 days before task
+    arrival_buffer = 1      # Arrive in Baltimore at least 3 days before task
     departure_buffer = 1    # Leave at least 1 day after
-    role_console = 'm'   # Supporting one of the three shifts on this day
+    role_console = 'm'      # Supporting one of the three shifts on this day
     role_sme_console = 'M'
     role_free = '.'         # Not schedulable
     blackout = 'X'          # Person is not available in Baltimore
@@ -17,9 +17,11 @@ class Person:
     role_kdp = 'K'          # Supporting a KDP on this day
 
     def __init__(self, idents, availabilty):
-        self.initial, self.forename, self.surname, self.email, self.organisation = idents
+        self.initial, self.forename, self.surname, self.email, self.organisation, self.bar_colour = idents
         self.is_reserve, max_nweeks, max_nweeks_block, self.blackout_days, self.greyout_days, schedule_days, analysis_days = availabilty
         self.fg_colour = 'black'
+        if self.organisation in ['ESA', 'STScI', 'GSFC']:
+            self.fg_colour = 'blue'
         self.max_allocation = 7 * max_nweeks
         self.max_contiguous_allocation = 7 * max_nweeks_block
         self.contiguously_allocated = 0
@@ -75,13 +77,21 @@ class Person:
         return n_allocated
 
     def _find_free_slot(self, rota, col, n_slots):
-        """ Find the free row (slot) in a column of the rota.
+        """ Find the the first free row (slot) in a column (day) of the rota.  Returns None if n_slots are
+        already filled.
         """
-        for slot in range(0, n_slots):
-            person = rota[slot, col]
-            if person == None or person == self:    # Free or this person already scheduled
+        free_slots = []
+        count_filled = 0
+        for slot, person in enumerate(rota[:, col]):
+            if person == self:
                 return slot
-        return None                             # Free row not found
+            if person == None:
+                free_slots.append(slot)
+            else:
+                count_filled += 1
+        if count_filled >= n_slots:
+            return None
+        return free_slots[0]
 
     def schedule_tasks(self, rota, task_type):
         """ Allocate this person to support all tasks in their sme list of a specific type
@@ -199,6 +209,7 @@ class Person:
         daily_slots = ShiftPlan.daily_slot_quota
         n_rows, n_days = rota.shape
         start_col, end_col, car_col = 0, n_days, -1                     # Default - schedule all of commissioning
+
         for col in range(start_col, end_col):
             n_slots = daily_slots[col]
             current_role = self.timetable[col]
@@ -207,10 +218,12 @@ class Person:
                 n_allocated = self._get_allocated()                     # Allocated full allowance?
                 ok_total = n_allocated < self.max_allocation
                 if ok_total:
-                    row = self._find_free_slot(rota, col, n_slots)    # Find free slot in rota
+                    row = self._find_free_slot(rota, col, n_slots)      # Find free slot in rota
                     if row is not None:
                         rota[row, col] = self
                         self.timetable[col] = Person.role_console
+#                        if row == 8 and col == 150:
+#                            print('Assigned {:s} to row, col = {:d},{:d}'.format(self.surname, row, col))
         return rota
 
     @staticmethod

@@ -114,15 +114,16 @@ class ShiftPlan:
                     row += 1
                 else:
                     initial, forename, surname, email, organisation = (token.strip() for token in tokens[0:5])
-                    ident = initial, forename, surname, email, organisation
-                    max_nweeks, max_nweeks_block  = (int(token.strip()) for token in tokens[5:7])
-                    blackout_days = ShiftPlan._decode_period_token(tokens[7])
-                    greyout_days = ShiftPlan._decode_period_token(tokens[8])
-                    scheduled_days = ShiftPlan._decode_period_token(tokens[9])
-                    analysis_days = ShiftPlan._decode_period_token(tokens[10])
+                    colour = tokens[5]
+                    ident = initial, forename, surname, email, organisation, colour
+                    max_nweeks, max_nweeks_block  = (int(token.strip()) for token in tokens[6:8])
+                    blackout_days = ShiftPlan._decode_period_token(tokens[8])
+                    greyout_days = ShiftPlan._decode_period_token(tokens[9])
+                    scheduled_days = ShiftPlan._decode_period_token(tokens[10])
+                    analysis_days = ShiftPlan._decode_period_token(tokens[11])
                     availability = is_reserve, max_nweeks, max_nweeks_block, blackout_days, greyout_days, scheduled_days, analysis_days
                     person = Person(ident, availability)
-                    for token in tokens[11:]:
+                    for token in tokens[12:]:
                         token = token.strip()
                         if len(token) > 2:
                             role, idt_id = token.split(':')
@@ -136,11 +137,11 @@ class ShiftPlan:
                             else:
                                 person.sme_tasks.append((task, role))
                     staff.append(person)
-        n_staff = len(staff)
-        colours = Tools.get_colour_list(n_staff)
-        for i, person in enumerate(staff):
-            colour = colours[i]
-            person.bar_colour = colour
+#        n_staff = len(staff)
+#        colours = Tools.get_colour_list(n_staff)
+#        for i, person in enumerate(staff):
+#            colour = colours[i]
+#            person.bar_colour = colour
         return staff
 
     @staticmethod
@@ -291,18 +292,6 @@ class ShiftPlan:
         return rota
 
     @staticmethod
-    def get_allocated(rota):
-        """ Get the list of unique persons from the rota array who can be
-        allocated rota days. """
-        person_list = []
-        rota_flat = rota.flatten()
-        for person in rota_flat:
-            if person != None:
-                if person not in person_list:
-                    person_list.append(person)
-        return person_list
-
-    @staticmethod
     def _plot_calendar_grid(n_panes, xrange, yrange, **kwargs):
         from plot_utils import Plot
         import calendar
@@ -314,7 +303,6 @@ class ShiftPlan:
         fig, axs = plot.set_plot_area('MIRI Shift Schedule',
                                       ncols=1, nrows=n_panes, fontsize=16,
                                       plotpad=plotpad)
-
         y_pitch = (0.008, 0.012, 0.016)[n_panes-1] * yrange
         xorg = ShiftPlan.start_day
         xlm = ShiftPlan.launchdoy_last_monday - ShiftPlan.launchdoy
@@ -414,8 +402,12 @@ class ShiftPlan:
                     x = day + xorg
                     on_today = rota[slot, day]
                     if on_today != on_yesterday:    # Change of shift for this slot
+                        if on_yesterday != None:
+                            if on_yesterday.initial == 'ALV':
+                                nob = 1
                         if on_yesterday != free:    # Close out last person
                             bar_colour = on_yesterday.bar_colour
+                            text_colour = on_yesterday.fg_colour
                             if x >= xmin:
                                 xoff = x if x < xmax else xmax
                                 xon = xon if x > xmin else xmin
@@ -425,8 +417,8 @@ class ShiftPlan:
                                     bar = Rectangle((xon, ybar), xw, 0.9 * ybarheight, **bar_args)
                                     ax.add_patch(bar)
                                     bartext = on_yesterday.surname
-                                    is_dark = Tools.is_dark(bar_colour)
-                                    text_colour = 'white' if is_dark else 'black'
+#                                    text_colour = 'white' if is_dark else 'black'
+#                                    text_colour = 'black'
                                     ax.text(xon, ybar, bartext,
                                             ha='left', va='bottom', color=text_colour)
                                     sme_tasks = on_yesterday.sme_tasks     # Plot SME tasks on timeline
@@ -511,9 +503,9 @@ class ShiftPlan:
                 xon = xmin
                 for day, role_today in enumerate(person.timetable):
                     x = day + xorg
-                    if role_today != role_yesterday or x == xmax:        # Draw the 'old' bar and start a new one
+                    if role_today != role_yesterday or day == xmax:        # Draw the 'old' bar and start a new one
                         if x >= xmin:
-                            xoff = x if x < xmax else xmax
+                            xoff = x if x <= xmax else xmax
                             xw = xoff - xon
                             if xw > 0 and role_yesterday != person.role_free:
                                 icol = i % n_colours            # Default bar colour
@@ -554,6 +546,7 @@ class ShiftPlan:
         :return:  Array of day indices in rota objects
         """
         days = []
+        token = token.strip()
         if token != '':
             tokens = token.split(';')
             for t in tokens:
