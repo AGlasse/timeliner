@@ -26,18 +26,18 @@ class Person:
         self.max_contiguous_allocation = 7 * max_nweeks_block
         self.contiguously_allocated = 0
         self.timetable = np.full(ShiftPlan.n_days, Person.role_free)
-        for day in self.blackout_days:
-            if 0 <= day < ShiftPlan.n_days - 1:      # Clip days outside commissioning period
-                self.timetable[day] = Person.blackout
-        for day in self.greyout_days:
-            if 0 <= day < ShiftPlan.n_days - 1:
-                self.timetable[day] = Person.greyout
-        for day in schedule_days:
+        for day in schedule_days:                   # Set on console by Alistair
             if 0 <= day < ShiftPlan.n_days - 1:
                 self.timetable[day] = Person.role_console
         for day in analysis_days:
             if 0 <= day < ShiftPlan.n_days - 1:
                 self.timetable[day] = Person.role_analyst
+        for day in self.greyout_days:               # Set unavailable by Alistair (overwrites his on console settings)
+            if 0 <= day < ShiftPlan.n_days - 1:
+                self.timetable[day] = Person.greyout
+        for day in self.blackout_days:              # Personally specified as unavailable (top priority)
+            if 0 <= day < ShiftPlan.n_days - 1:
+                self.timetable[day] = Person.blackout
         self.sme_tasks = []
         return
 
