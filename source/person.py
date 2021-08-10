@@ -111,7 +111,7 @@ class Person:
         car_col = car_day - ShiftPlan.start_day
         start_day = car_day - self.arrival_buffer
         start_md = ShiftPlan.getLastDow(mission_day=start_day,
-                                        dows=[1, 4])    # Force start on Tuesday or Friday
+                                        dows=[1, 4])            # Force start on Tuesday or Friday
         start_col = start_md - ShiftPlan.start_day
         end_col = car_col + self.departure_buffer
         if task.type == 'KDP':
@@ -121,8 +121,8 @@ class Person:
             md = col + ShiftPlan.start_day
             n_slots = daily_slots[col]
             current_role = self.timetable[col]
-            is_blackout = current_role == Person.blackout   # Person says they're unavailable
-            is_greyout = current_role == Person.greyout     # Alistair says they're not needed
+            is_blackout = current_role == Person.blackout       # Person says they're unavailable
+            is_greyout = current_role == Person.greyout         # Alistair says they're not needed
             is_moc = current_role == Person.role_console
             is_sme_moc = current_role == Person.role_sme_console
 
@@ -134,60 +134,37 @@ class Person:
                 if ok_total:
                     if task.type == 'CAP' or task.type == 'KDP':    # Requested task for this day
                         if is_moc or is_sme_moc:                # Currently scheduled to be on console. Flag discrepancy
-#                            role_text = ' as SME' if is_sme_moc else ''
-#                            fmt = "L+{:d} {:s} is allocated{:s} in MOC, but requests CAP/KDP support for {:s}"
-#                            text = fmt.format(md, self.surname, role_text, task.idt_id)
                             if task.type == 'KDP':              # Prioritise over MOC activities.
-#                                text += ' - Setting role to KDP support'
                                 role = Person.role_kdp
                             else:
                                 if col == car_col:
-#                                    text += ' - Setting role to SME analyst'
                                     role = Person.role_sme_analyst
                                 else:
-#                                    text += ' - Setting role to analyst'
                                     role = Person.role_analyst
                             rota = self._remove_from_rota(rota, col)
-#                            print(text)
                         else:
-#                            fmt = "L+{:d} {:s} requests CAP/KDP support for {:s}"
-#                            text = fmt.format(car_md, self.surname, task.idt_id)
                             if task.type == 'KDP':
-#                                text += ' - Setting role to KDP support'
                                 role = Person.role_kdp
                             else:
-#                                text += ' - Setting role to analyst'
-                                role = Person.role_analyst          # Add to timetable (not rota)
-#                            print(text)
+                                role = Person.role_analyst      # Add to timetable (not rota)
                     else:   # Its a CAR. May support as an SME analyst (not in rota)
                         if requested_role == 'A':
-                            if is_moc or is_sme_moc:    # Currently assigned to be in MOC
-#                                role_text = ' as SME' if is_sme_moc else ''
-#                                fmt = "L+{:d} {:s} is allocated{:s} in MOC, but requests analyst support for {:s}"
-#                                text = fmt.format(md, self.surname, role_text, task.idt_id)
-                                role = Person.role_analyst
-                                if col == car_col:
-                                    role = Person.role_sme_analyst
-#                                text += ' - Removing from rota and setting role to SME analyst'
+                            role = Person.role_analyst
+                            if col == car_col:
+                                role = Person.role_sme_analyst
+                            if is_moc or is_sme_moc:            # Currently assigned to be in MOC
                                 rota = self._remove_from_rota(rota, col)
-#                                print(text)
-                            else:
-                                role = Person.role_analyst
                         else:   # Requested role is in MOC
-                            if is_moc or is_sme_moc:    # Already allocated in MOC
-#                                role_text = ' as SME' if is_sme_moc else ''
-#                                fmt = "L+{:d} {:s} is allocated{:s} in MOC, and is requesting MOC role for {:s}"
-#                                text = fmt.format(md, self.surname, role_text, task.idt_id)
+                            if is_moc or is_sme_moc:            # Already allocated in MOC
                                 role = Person.role_sme_console if col == car_col else Person.role_console
-#                                print(text)
                             else:
-                                role = Person.role_console    # Default role for CARs
+                                role = Person.role_console      # Default role for CARs
                                 row = self._find_free_slot(rota, col, n_slots)  # Find free slot in rota
                                 if row is not None:
                                     if col == car_col:
                                         role = Person.role_sme_console
                                     rota[row, col] = self       # Allocate CARs on rota.
-                self.timetable[col] = role              # Allocate all tasks in personal timetable
+                self.timetable[col] = role                      # Allocate all tasks in personal timetable
         return rota
 
     def schedule_forced(self, rota):

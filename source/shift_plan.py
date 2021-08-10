@@ -137,11 +137,6 @@ class ShiftPlan:
                             else:
                                 person.sme_tasks.append((task, role))
                     staff.append(person)
-#        n_staff = len(staff)
-#        colours = Tools.get_colour_list(n_staff)
-#        for i, person in enumerate(staff):
-#            colour = colours[i]
-#            person.bar_colour = colour
         return staff
 
     @staticmethod
@@ -402,9 +397,6 @@ class ShiftPlan:
                     x = day + xorg
                     on_today = rota[slot, day]
                     if on_today != on_yesterday:    # Change of shift for this slot
-                        if on_yesterday != None:
-                            if on_yesterday.initial == 'ALV':
-                                nob = 1
                         if on_yesterday != free:    # Close out last person
                             bar_colour = on_yesterday.bar_colour
                             text_colour = on_yesterday.fg_colour
