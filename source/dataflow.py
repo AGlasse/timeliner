@@ -28,7 +28,7 @@ class DataFlow:
         xy_origin = [xlim[0] + 50, ylim[1] - 100]
 
         # End of row CARS for 'All' case
-        car_breaks = ['MIR-007', 'MIR-050', 'MIR-064.1', 'MIR-077']
+        car_breaks = ['MIR-007', 'MIR-050', 'MIR-064.1', 'MIR-058.2', 'MIR-077']
 
         idx = DataFlow.col_dict[tgt_kdp_id]
         cols = DataFlow.cols_list[idx]
@@ -57,7 +57,8 @@ class DataFlow:
         KdpUtils.connect_kdps(kdps)
 
         fig, axs = plot.set_plot_area('MIRI CAR/CAP Flow',
-                                      xlim=xlim, ylim=ylim, aspect='equal')
+                                      xlim=xlim, ylim=ylim, aspect='equal',
+                                      fontsize=10)
         ax = axs[0, 0]
         plot_grid = kwargs.get('plot_grid', False)
         if plot_grid:
