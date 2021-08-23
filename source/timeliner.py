@@ -12,7 +12,7 @@ from dataflow import DataFlow
 from tools import Tools
 
 cawg_path = "./inputs/"
-cawg_date = "2021_03"
+cawg_date = "2021_07"
 #timeline_file = "2021June_Working_Commissioning_Timeline.csv"
 timeline_file = "2021July_MIR005_3_update.csv"
 staff_file = "staff.csv"
@@ -59,14 +59,14 @@ rota = ShiftPlan.allocate_prescheduled(rota)
 rota = ShiftPlan.allocate_tasks(rota, 'CAP')
 rota = ShiftPlan.allocate_tasks(rota, 'KDP')
 rota = ShiftPlan.allocate_tasks(rota, 'CAR')
-ShiftPlan.plot_staff_schedules(name='s3.png')
-ShiftPlan.plot_rota(rota, 'r3')
+#ShiftPlan.plot_staff_schedules(name='s3.png')
+#ShiftPlan.plot_rota(rota, 'r3')
 rota = ShiftPlan.allocate_remaining(rota)
-ShiftPlan.plot_staff_schedules(name='s4.png')
-ShiftPlan.plot_rota(rota, 'r4')
+#ShiftPlan.plot_staff_schedules(name='s4.png')
+#ShiftPlan.plot_rota(rota, 'r4')
 rota = ShiftPlan.tidy_rota(rota)
-ShiftPlan.plot_staff_schedules(name='s5.png')
-ShiftPlan.plot_rota(rota, 'r5')
+#ShiftPlan.plot_staff_schedules(name='s5.png')
+#ShiftPlan.plot_rota(rota, 'r5')
 rota = ShiftPlan.remove_singles(rota)
 ShiftPlan.test_rota(rota)
 ShiftPlan.plot_staff_schedules(name='staff_schedule.png')

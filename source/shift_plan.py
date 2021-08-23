@@ -17,8 +17,8 @@ class ShiftPlan:
     """
     month_names = ['January', 'February', 'March', 'April', 'May', 'June',
                    'Jul', 'Aug', 'Sep', 'Oct', 'November', 'December']
-    launchyear, launchmonth, launchdate, launchhour = 2021, 11, 25, 11.00
-    launchdate_last_monday = 22
+    launchyear, launchmonth, launchdate, launchhour = 2021, 12, 15, 11.00
+    launchdate_last_monday = 13             # Date of month of the last Monday before launch
     start_day, end_day = -5, 200
     n_days = end_day - start_day + 1
     console_rota = []
@@ -32,7 +32,7 @@ class ShiftPlan:
         n_days = comm_end_day - comm_start_day + 1
         ShiftPlan.start_day, ShiftPlan.end_day, ShiftPlan.n_days = comm_start_day, comm_end_day, n_days
         ld_lm = ShiftPlan.launchdate_last_monday
-        ShiftPlan.launchdoy_last_monday = ShiftPlan._ymd_to_doy(2021, 11, ld_lm)
+        ShiftPlan.launchdoy_last_monday = ShiftPlan._ymd_to_doy(ShiftPlan.launchyear, ShiftPlan.launchmonth, ld_lm)
         ly, lm, ld = ShiftPlan.launchyear, ShiftPlan.launchmonth, ShiftPlan.launchdate
         ShiftPlan.launchdoy = ShiftPlan._ymd_to_doy(ly, lm, ld)
         ShiftPlan.staff = self.read_staff()
@@ -338,6 +338,9 @@ class ShiftPlan:
             ax.text(xl+0.001*xrange, yrange + 0.1*y_pitch, launch_text, color='blue')
             year = ShiftPlan.launchyear
             month = ShiftPlan.launchmonth + 1
+            if month > 12:      # Catch December launch
+                year += 1
+                month -= 12
             is_more = True
             while is_more:
                 xdom = ShiftPlan._ymd_to_md(year, month, 1)
