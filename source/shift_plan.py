@@ -17,9 +17,9 @@ class ShiftPlan:
     """
     month_names = ['January', 'February', 'March', 'April', 'May', 'June',
                    'Jul', 'Aug', 'Sep', 'Oct', 'November', 'December']
-    launchyear, launchmonth, launchdate, launchhour = 2021, 12, 15, 11.00
+    launchyear, launchmonth, launchdate, launchhour = 2021, 12, 18, 11.00
     launchdate_last_monday = 13             # Date of month of the last Monday before launch
-    start_day, end_day = -5, 200
+    start_day, end_day = -3, 200
     n_days = end_day - start_day + 1
     console_rota = []
     free = None
@@ -46,9 +46,9 @@ class ShiftPlan:
         """
         n_days = ShiftPlan.n_days
         n_slots_max = 15
-        n_slots_nominal = 10       #ShiftPlan.n_slots_peak               # More slots for peak stress
-        daily_slot_quota = np.full((n_days), n_slots_nominal)        # Count of slots on each day
-        unusual_slots = [(-6, -2, 3), (90, 100, 15), (152, 165, 15)]
+        n_slots_nominal = 10                                            # More slots for peak stress
+        daily_slot_quota = np.full((n_days), n_slots_nominal)           # Count of slots on each day
+        unusual_slots = [(-6, 0, 3), (90, 100, 15), (152, 165, 15)]     # L+a L+b nshifts
         for uslot in unusual_slots:
             col1 = uslot[0] - ShiftPlan.start_day
             col2 = uslot[1] - ShiftPlan.start_day
@@ -324,7 +324,7 @@ class ShiftPlan:
                 ax.text(xlm+0.001*xrange, yrange - 2.0*y_pitch, doy_text, color='grey')
                 year, month, dom = ShiftPlan._doy_to_ymd(year, doy)
                 ax.text(xlm+0.001*xrange, yrange - y_pitch, 'Mon', color='grey')
-                if dom > 4:
+                if dom > 2:                 # Avoid overwriting other decorations
                     dom_text = "{:d}".format(dom)
                     ax.text(xlm+0.001*xrange, yrange + 0.1*y_pitch, dom_text, color='blue')
                 xlm += 7
@@ -333,9 +333,9 @@ class ShiftPlan:
             ax.plot([xl, xl], [ylim[0], 1.01*yrange], color='blue', lw=1.5, ls='--')
             lyr, lmo = ShiftPlan.launchyear, ShiftPlan.launchmonth
             lda, lti = ShiftPlan.launchdate, ShiftPlan.launchhour
-            fmt = 'Launch on {:d}/{:d}/{:d}\nat {:5.2f} UT'
+            fmt = 'Launch at {:5.2f} UT'
             launch_text = fmt.format(lyr, lmo, lda, lti)
-            ax.text(xl+0.001*xrange, yrange + 0.1*y_pitch, launch_text, color='blue')
+            ax.text(xl+0.001*xrange, yrange + y_pitch, launch_text, color='blue')
             year = ShiftPlan.launchyear
             month = ShiftPlan.launchmonth + 1
             if month > 12:      # Catch December launch
@@ -359,9 +359,9 @@ class ShiftPlan:
             while xmd < xmax:
                 md_text = fmt.format(int(xmd))
                 fmt = "+{:d}"
-                ax.text(xmd + 0.001 * xrange, yrange + 2.*y_pitch, md_text, color='green')
+                ax.text(xmd + 0.001 * xrange, yrange + 2.0*y_pitch, md_text, color='green')
                 ax.text(xmd + 0.001 * xrange, -y_pitch, md_text, color='green')
-                ax.plot([xmd, xmd], [yrange, yrange - 2.0 * y_pitch], color='green', lw=1.0, ls='-')
+                ax.plot([xmd, xmd], [yrange, yrange - 2.0*y_pitch], color='green', lw=1.0, ls='-')
                 xmd += 10
         return fig, axs
 
