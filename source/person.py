@@ -5,8 +5,8 @@ from shift_plan import ShiftPlan
 
 class Person:
 
-    arrival_buffer = 1      # Arrive in Baltimore at least 3 days before task
-    departure_buffer = 1    # Leave at least 1 day after
+    arrival_buffer = 0      # Arrive in Baltimore n days before task
+    departure_buffer = 0    # Leave at least n days after
     role_console = 'm'      # Supporting one of the three shifts on this day
     role_sme_console = 'M'
     role_free = '.'         # Not schedulable
@@ -109,10 +109,10 @@ class Person:
         daily_slots = ShiftPlan.daily_slot_quota
         car_day = int(task.t_start + ShiftPlan.launchhour/24.0)
         car_col = car_day - ShiftPlan.start_day
-        start_day = car_day - self.arrival_buffer
-        start_md = ShiftPlan.getLastDow(mission_day=start_day,
-                                        dows=[1, 4])            # Force start on Tuesday or Friday
-        start_col = start_md - ShiftPlan.start_day
+#        start_day = car_day - self.arrival_buffer
+#        start_md = ShiftPlan.getLastDow(mission_day=start_day,
+#                                        dows=[1, 4])            # Force start on Tuesday or Friday
+        start_col = car_col - self.arrival_buffer            # start_md - ShiftPlan.start_day
         end_col = car_col + self.departure_buffer
         if task.type == 'KDP':
             start_col, end_col = car_col, car_col
@@ -199,8 +199,6 @@ class Person:
                     if row is not None:
                         rota[row, col] = self
                         self.timetable[col] = Person.role_console
-#                        if row == 8 and col == 150:
-#                            print('Assigned {:s} to row, col = {:d},{:d}'.format(self.surname, row, col))
         return rota
 
     @staticmethod
