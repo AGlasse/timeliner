@@ -19,18 +19,18 @@ class ShiftPlan:
                    'Jul', 'Aug', 'Sep', 'Oct', 'November', 'December']
     launchyear, launchmonth, launchdate, launchhour = 2021, 12, 18, 11.00
     launchdate_last_monday = 13             # Date of month of the last Monday before launch
-    start_day, end_day = -3, 200
-    n_days = end_day - start_day + 1
+    start_md, end_md = -3, 190
+    n_days = end_md - start_md + 1
     console_rota = []
     free = None
 
     def __init__(self, **kwargs):
         import numpy as np
 
-        comm_start_day = kwargs.get('start_day', ShiftPlan.start_day)
-        comm_end_day = kwargs.get('end_day', ShiftPlan.end_day)
+        comm_start_day = kwargs.get('start_day', ShiftPlan.start_md)
+        comm_end_day = kwargs.get('end_day', ShiftPlan.end_md)
         n_days = comm_end_day - comm_start_day + 1
-        ShiftPlan.start_day, ShiftPlan.end_day, ShiftPlan.n_days = comm_start_day, comm_end_day, n_days
+        ShiftPlan.start_md, ShiftPlan.end_md, ShiftPlan.n_days = comm_start_day, comm_end_day, n_days
         ld_lm = ShiftPlan.launchdate_last_monday
         ShiftPlan.launchdoy_last_monday = ShiftPlan._ymd_to_doy(ShiftPlan.launchyear, ShiftPlan.launchmonth, ld_lm)
         ly, lm, ld = ShiftPlan.launchyear, ShiftPlan.launchmonth, ShiftPlan.launchdate
@@ -48,10 +48,10 @@ class ShiftPlan:
         n_slots_max = 15
         n_slots_nominal = 10                                            # More slots for peak stress
         daily_slot_quota = np.full((n_days), n_slots_nominal)           # Count of slots on each day
-        unusual_slots = [(-6, 0, 3), (90, 100, 15), (152, 165, 15)]     # L+a L+b nshifts
+        unusual_slots = [(-6, 0, 3), (90, 100, 15), (152, 165, 15), (185, 190, 3)]     # L+a L+b nshifts
         for uslot in unusual_slots:
-            col1 = uslot[0] - ShiftPlan.start_day
-            col2 = uslot[1] - ShiftPlan.start_day
+            col1 = uslot[0] - ShiftPlan.start_md
+            col2 = uslot[1] - ShiftPlan.start_md
             col1 = col1 if col1 > 0 else 0
             col2 = col2 if col2 < n_days else n_days - 1
             daily_slot_quota[col1:col2+1] = uslot[2]
@@ -89,7 +89,7 @@ class ShiftPlan:
                         an_counter += 1
             if quota != oc_counter:
                 fmt = "L+{:d}, on console slots filled/allocated = {:d}/{:d}, plus analyst = {:d}"
-                md = day + ShiftPlan.start_day
+                md = day + ShiftPlan.start_md
                 print(fmt.format(md, oc_counter, quota, an_counter))
         return
 
@@ -188,7 +188,7 @@ class ShiftPlan:
             car_text += "{:>6s}".format('|')
             car_texts.append(car_text)
             row_idxs.append(0)
-        t_soc = ShiftPlan.start_day     # Start of commissioning
+        t_soc = ShiftPlan.start_md     # Start of commissioning
         row = 0
         for task in tasks:
             car_text, row_idx = car_texts[row], row_idxs[row]
@@ -299,7 +299,7 @@ class ShiftPlan:
                                       ncols=1, nrows=n_panes, fontsize=16,
                                       plotpad=plotpad)
         y_pitch = (0.008, 0.012, 0.016)[n_panes-1] * yrange
-        xorg = ShiftPlan.start_day
+        xorg = ShiftPlan.start_md
         xlm = ShiftPlan.launchdoy_last_monday - ShiftPlan.launchdoy
         for pane in range(0, n_panes):
             ax = axs[pane, 0]
@@ -378,7 +378,7 @@ class ShiftPlan:
 
         free = ShiftPlan.free
         n_slots, n_days = rota.shape
-        xorg = ShiftPlan.start_day
+        xorg = ShiftPlan.start_md
         yorg = 32                                   # Plot CARs above midline and rota below
         ybarheight = 2.0
         launch_phase = ShiftPlan.launchhour / 24.0  # Fraction of day
@@ -412,8 +412,6 @@ class ShiftPlan:
                                     bar = Rectangle((xon, ybar), xw, 0.9 * ybarheight, **bar_args)
                                     ax.add_patch(bar)
                                     bartext = on_yesterday.surname
-#                                    text_colour = 'white' if is_dark else 'black'
-#                                    text_colour = 'black'
                                     ax.text(xon, ybar, bartext,
                                             ha='left', va='bottom', color=text_colour)
                                     sme_tasks = on_yesterday.sme_tasks     # Plot SME tasks on timeline
@@ -469,7 +467,7 @@ class ShiftPlan:
 
         n_panes, xrange, yrange = 2, 105, 130
         fig, axs = ShiftPlan._plot_calendar_grid(n_panes, xrange, yrange, plotpad=10.0)
-        xorg = ShiftPlan.start_day
+        xorg = ShiftPlan.start_md
 
         staff = ShiftPlan.staff
         ybarheight = 2.0
@@ -498,7 +496,7 @@ class ShiftPlan:
                 xon = xmin
                 for day, role_today in enumerate(person.timetable):
                     x = day + xorg
-                    if role_today != role_yesterday or day == xmax:        # Draw the 'old' bar and start a new one
+                    if role_today != role_yesterday or day == ShiftPlan.n_days - 1:        # Draw the 'old' bar and start a new one
                         if x >= xmin:
                             xoff = x if x <= xmax else xmax
                             xw = xoff - xon
@@ -525,7 +523,7 @@ class ShiftPlan:
                         xon = x
                     role_yesterday = role_today
                 text = person.get_allocation_text()
-                ax.text(xmin-1.0, ybar, text, ha='right', va='bottom', color='black')
+                ax.text(xmin-0.1, ybar, text, ha='right', va='bottom', color='black')
                 bar = Rectangle((xmin-1.0, ybar), 1.0, 0.9 * ybarheight, fc=person.bar_colour, fill=True)
                 ax.add_patch(bar)
 
@@ -552,7 +550,7 @@ class ShiftPlan:
                     md_start = ShiftPlan._ymd_to_md(2000 + int(t[0:2]), int(t[2:4]), int(t[4:6]))
                     md_end = ShiftPlan._ymd_to_md(2000 + int(t[7:9]), int(t[9:11]), int(t[11:13]))
                 for md in np.arange(md_start, md_end + 1):
-                    day_idx = md - ShiftPlan.start_day
+                    day_idx = md - ShiftPlan.start_md
                     days.append(day_idx)
         return days
 

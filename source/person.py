@@ -108,7 +108,7 @@ class Person:
         """
         daily_slots = ShiftPlan.daily_slot_quota
         car_day = int(task.t_start + ShiftPlan.launchhour/24.0)
-        car_col = car_day - ShiftPlan.start_day
+        car_col = car_day - ShiftPlan.start_md
 #        start_day = car_day - self.arrival_buffer
 #        start_md = ShiftPlan.getLastDow(mission_day=start_day,
 #                                        dows=[1, 4])            # Force start on Tuesday or Friday
@@ -118,7 +118,7 @@ class Person:
             start_col, end_col = car_col, car_col
 
         for col in range(start_col, end_col + 1):
-            md = col + ShiftPlan.start_day
+            md = col + ShiftPlan.start_md
             n_slots = daily_slots[col]
             current_role = self.timetable[col]
             is_blackout = current_role == Person.blackout       # Person says they're unavailable
@@ -199,6 +199,8 @@ class Person:
                     if row is not None:
                         rota[row, col] = self
                         self.timetable[col] = Person.role_console
+        if self.surname == 'Murray':
+            nob = 1
         return rota
 
     @staticmethod
@@ -229,7 +231,7 @@ class Person:
 
         str = "{:>6s}".format("L + |")
         days_week = 7
-        day = ShiftPlan.start_day       # + days_week       # Label is at start of week
+        day = ShiftPlan.start_md       # + days_week       # Label is at start of week
         width = days_week
         fmt = '{:<' + "{:d}".format(width) + '}'
         if to_csv:
@@ -246,7 +248,7 @@ class Person:
         str = "{:>6s}".format("|")
         if to_csv:
             str = str + ','
-        day = ShiftPlan.start_day
+        day = ShiftPlan.start_md
         dow = 0
         for code in self.timetable:
             str += code
