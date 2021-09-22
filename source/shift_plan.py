@@ -464,6 +464,7 @@ class ShiftPlan:
         from matplotlib.patches import Polygon, Rectangle, Circle
 
         name = kwargs.get('name', 'staff_schedule.png')
+        show_greyout = kwargs.get('show_greyout', True)
 
         n_panes, xrange, yrange = 2, 105, 130
         fig, axs = ShiftPlan._plot_calendar_grid(n_panes, xrange, yrange, plotpad=10.0)
@@ -506,7 +507,7 @@ class ShiftPlan:
                                 if role_yesterday == person.blackout:
                                     colour = 'black'
                                 if role_yesterday == person.greyout:
-                                    colour = 'grey'
+                                    colour = 'grey' if show_greyout else 'white'
                                 if role_yesterday == person.role_console:
                                     colour = 'dodgerblue'
                                 if role_yesterday == person.role_sme_console:

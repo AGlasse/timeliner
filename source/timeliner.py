@@ -46,7 +46,7 @@ if dataflow:
     dc_keys = DataFlow.col_dict.keys()
     for dc_key in dc_keys:      #['M-1']:
         print('Plotting ' + dc_key)
-        dataflow.plot_dataflow(cars, caps, kdps, cawg_date, kdp_id=dc_key)  # kdp_id=dc_key (or any non-KDP) to plot all
+        dataflow.plot_dataflow(cars, caps, kdps, cawg_date, kdp_id=dc_key)
 
 print("Building shift plan")
 plan = ShiftPlan()
@@ -69,7 +69,7 @@ ShiftPlan.plot_staff_schedules(name='s5.png')
 #ShiftPlan.plot_rota(rota, 'r5')
 rota = ShiftPlan.remove_singles(rota)
 ShiftPlan.test_rota(rota)
-ShiftPlan.plot_staff_schedules(name='staff_schedule.png')
+ShiftPlan.plot_staff_schedules(name='staff_schedule.png', show_greyout=False)
 ShiftPlan.plot_rota(rota, 'rota')
 ShiftPlan.print(to_csv=True)
 
