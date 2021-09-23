@@ -6,7 +6,7 @@ NG-ID,CAR_ID,    PID,ObsList,Short Title,Title
 19,   MIR-042.1, RTC,      ,CCC open,MIRI CCC Unlock and Opening
 37,   MIR-042.3, RTC,       ,CCC close,MIRI CCC Closure
 61,   NG-61,     RTC,       ,CCE On,CCE Power ON and Transition to State 2 (Internal De
-69.1, OTE-28.2, 1165,5,Pre-MIMF 2 \n PSF check,Pre-MIMF 2 in focus PSF check
+69.10,OTE-28.2, 1165,5,Pre-MIMF 2 \n PSF check,Pre-MIMF 2 in focus PSF check
 84,   OTE-29,   1166,78.79.80.81.82,MIMF 2,MIMF measurement 2
 73,   MIR-004,  1012,All,Cal lamps,MIRI Calibration Lamp Operation
 74.1, MIR-005.1,1023,1.2,Anneal \n Verification,MIRI Detector Anneal (First Instance)
@@ -30,7 +30,7 @@ NG-ID,CAR_ID,    PID,ObsList,Short Title,Title
 117,  MIR-040,  RTC,       ,Mech. char,MIRI Mechanism Characterization
 118,  MIR-041,  RTC,       ,POM char.,MIRI Pick-Off Mirror Characterization
 119,  MIR-016,1032,All,Img/LRS glints,MIRI Imager and LRS Glints and Scattered Light
-125.1, MIR-001.1,RTC,       ,FPS warm checkout,MIRI Focal Plane System Warm Checkout
+125.1,MIR-001.1,RTC,       ,FPS warm checkout,MIRI Focal Plane System Warm Checkout
 125.2,MIR-001.2,RTC,       ,FPS warm checkout,MIRI Focal Plane System Warm Checkout
 126,  MIR-002,1011,2,FPS configs,MIRI Focal Plane Configurations
 127,  MIR-050,1037,All,Coro contrast,MIRI Coronagraphic Scattered Light & Contrast Ratio
@@ -59,10 +59,10 @@ NG-ID,CAR_ID,    PID,ObsList,Short Title,Title
 700,  NIS-16,RTC,,NIRISS wavecal.,NIRISS GR150C/R Wavelength Calibration
 752,  NG-752,RTC,,Slew to HOT’,Obs slew to hot
 754,  STL-002,1448,All,Obs. Straylight,Stray Light Correlation (includes slew to 5 attitudes)
-764.1, MIR-071.1,RTC,       ,ICE basic func,MIRI ICE Warm Basic Functional Test
-764.2, MIR-071.2,RTC,       ,ICE basic func,MIRI ICE Warm Basic Functional Test
+764.1,MIR-071.1,RTC,       ,ICE basic func,MIRI ICE Warm Basic Functional Test
+764.2,MIR-071.2,RTC,       ,ICE basic func,MIRI ICE Warm Basic Functional Test
 764.3,MIR-071.3,RTC,       ,ICE basic func,MIRI ICE Basic Functional Test (COLD)
-765, NG-765,RTC,          ,MIRI CCC Open 2,MIRI CCC 2nd opening
+765,  NG-765,RTC,          ,MIRI CCC Open 2,MIRI CCC 2nd opening
 769,  MIR-075,1054,All,LRS ext src flat,MIRI LRS Extended Source Flat Field
 770,  MIR-074,1053,All,LRS PSF,MIRI LRS PSF Characterization
 774.3,FGS-17.3,1022,17.18.19.20.21.22.23.24.25,FGS giant planet,FGS Giant Planet Scattered Light (MIRI)
