@@ -1,10 +1,10 @@
 CAR         ,PID     ,Observations                  ,  t_sci_apt/hr,  t_dur_apt/hr, t_dur_cawg/hr,  CAR label                     
 OTE-28.2    ,1165    ,                              ,          0.00,          0.00,          2.62,  Pre-MIMF 2 \n PSF check       
 OTE-29      ,1166    ,                              ,          0.00,          0.00,         45.68,  MIMF 2                        
-MIR-004     ,1012    ,All                           ,          1.66,          3.20,          3.48,  Cal lamps                     
-MIR-005.1   ,1023    ,1-2                           ,          2.12,          2.32,          6.16,  Anneal \n Verification        
-MIR-005.2   ,1023    ,3-4                           ,          2.12,          2.32,          3.78,  Anneal 2                      
-MIR-005.3   ,1023    ,5-6-7                         ,          0.25,          0.89,          0.50,  Anneal 3                      
+MIR-004     ,1012    ,All                           ,          1.66,          3.20,          3.30,  Cal lamps                     
+MIR-005.1   ,1023    ,1-2                           ,          2.12,          2.32,          6.03,  Anneal \n Verification        
+MIR-005.2   ,1023    ,3-4                           ,          2.12,          2.32,          3.63,  Anneal 2                      
+MIR-005.3   ,1023    ,5-6-7                         ,          0.25,          0.89,          1.39,  Anneal 3                      
 MIR-005.4   ,1023    ,8                             ,          1.93,          2.03,          3.00,  Anneal 4                      
 MIR-005.5   ,1023    ,9                             ,          0.06,          0.23,          0.50,  Anneal 5                      
 MIR-005.6   ,1023    ,10-11-12-13                   ,          0.12,          1.35,          0.50,  Anneal 6                      
@@ -23,7 +23,7 @@ MIR-015     ,1031    ,All                           ,          4.66,          8.
 MIR-016     ,1032    ,All                           ,          0.69,          1.58,          1.60,  Img/LRS glints                
 MIR-002     ,1011    ,2                             ,          0.02,          0.12,          2.90,  FPS configs                   
 MIR-050     ,1037    ,All                           ,         22.27,         28.81,         28.55,  Coro contrast                 
-MIR-060     ,1046    ,All                           ,          2.21,          3.79,          4.14,  Detector func.                
+MIR-060     ,1046    ,All                           ,          2.21,          3.79,          3.94,  Detector func.                
 MIR-051     ,1038    ,All                           ,          1.43,          2.49,          2.50,  Coro centres                  
 MIR-018     ,1034    ,All                           ,          0.42,          1.77,          1.58,  LRS slit losses               
 MIR-052     ,1039    ,All                           ,          1.55,          3.60,          3.42,  Latent char.                  
@@ -47,6 +47,6 @@ MIR-073.2   ,1052    ,4-5-6                         ,          2.32,          4.
 MIR-077     ,1261    ,All                           ,          1.67,          3.09,          3.15,  Bright source sens            
 MIR-078     ,1406    ,All                           ,          3.15,         11.41,         11.50,  Coro TA                       
 MIR-076     ,1259    ,All                           ,          0.42,          2.71,          2.65,  LRS dispersion                
-MIR-065     ,1519    ,All                           ,          8.57,          9.78,          3.09,  RSCD and\nNreset=1            
-MIR-065     ,1546    ,All                           ,          8.57,          9.78,          3.09,  RSCD and\nNreset=1            
-            ,        ,Total =                       ,        118.54,        239.34,        322.70,                                
+MIR-065     ,1519    ,All                           ,          8.57,          9.78,          3.25,  RSCD and\nNreset=1            
+MIR-065     ,1546    ,All                           ,          8.57,          9.78,          3.25,  RSCD and\nNreset=1            
+            ,        ,Total =                       ,        118.54,        239.34,        323.25,                                

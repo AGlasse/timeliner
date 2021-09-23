@@ -14,7 +14,7 @@ from tools import Tools
 cawg_path = "./inputs/"
 cawg_date = "2021_07"
 #timeline_file = "2021June_Working_Commissioning_Timeline.csv"
-timeline_file = "2021July_MIR005_3_update.csv"
+timeline_file = "2021Sept_Working_Commissioning_Timeline.csv"
 staff_file = "staff.csv"
 apt_data_file = "./inputs/apt_decoder_data.csv"
 car_obs_file = "./inputs/car_obs_table.csv"
