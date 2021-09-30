@@ -582,23 +582,6 @@ class ShiftPlan:
         return tasks
 
     @staticmethod
-    def getLastDow(**kwargs):
-        md = kwargs.get('mission_day', None)          # Mission day
-        dows = kwargs.get('dows', [1, 4])             # Good start days of week (Tues/Fri)
-
-        md_monday = ShiftPlan.launchdoy_last_monday - ShiftPlan.launchdoy
-        dow = (md - md_monday) % 7
-        d = dow
-        while d > dow - 7:
-            is_valid = d in dows
-            if is_valid:
-                return md
-            md -= 1
-            d -= 1
-            d = d if d >= 0 else 6
-        return None
-
-    @staticmethod
     def _ymd_to_doy(year, month, dom):
         doms = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
         if year % 400 == 0:     # Trap leap years
