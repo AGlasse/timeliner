@@ -109,16 +109,12 @@ class Person:
         daily_slots = ShiftPlan.daily_slot_quota
         car_day = int(task.t_start + ShiftPlan.launchhour/24.0)
         car_col = car_day - ShiftPlan.start_md
-#        start_day = car_day - self.arrival_buffer
-#        start_md = ShiftPlan.getLastDow(mission_day=start_day,
-#                                        dows=[1, 4])            # Force start on Tuesday or Friday
         start_col = car_col - self.arrival_buffer            # start_md - ShiftPlan.start_day
         end_col = car_col + self.departure_buffer
         if task.type == 'KDP':
             start_col, end_col = car_col, car_col
 
         for col in range(start_col, end_col + 1):
-            md = col + ShiftPlan.start_md
             n_slots = daily_slots[col]
             current_role = self.timetable[col]
             is_blackout = current_role == Person.blackout       # Person says they're unavailable
@@ -127,7 +123,13 @@ class Person:
             is_sme_moc = current_role == Person.role_sme_console
 
             is_unavailable = is_blackout or is_greyout
-            if not is_unavailable:
+            if is_unavailable:
+                md = col + ShiftPlan.start_md
+                fmt = "Unable to schedule {:s} for {:s} on L+{:d}"
+                err_msg = fmt.format(self.surname, task.idt_id, md)
+                print(err_msg)
+
+            else:
                 role = current_role                             # Default is current role
                 n_allocated = self._get_allocated()             # Allocated full allowance?
                 ok_total = n_allocated < self.max_allocation

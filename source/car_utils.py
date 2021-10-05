@@ -106,6 +106,10 @@ class CarUtils:
 
         combines = [('MIR-082',                     # Combined CAR name
                      'MIR-082.1', 'MIR-082.2', 'MIR-082.3', 'MIR-082.4', 'MIR-082.5'),  # ..included
+                    ('MIR-065',
+                     'MIR-065.1', 'MIR-065.2'),
+                    ('MIR-ERO',
+                     'ERO-1.2', 'ERO-2.2', 'ERO-3.2', 'ERO-4.2', 'ERO-5.2', 'ERO-6.2')
                     ]
         eros = [("ERO-1.1", "ERO 1 - MIR")]
         patch_names = {'270.2': 'SIAF update conf.',
@@ -315,6 +319,8 @@ class CarUtils:
         for cpos in cpos_table:
             cpos_car_inst, cpos_pid, cpos_obs_list = cpos
             car, err_msg = CarUtils.get_car(cpos_car_inst)
+            if car == None:
+                nob = 1
             car.obs_list = []
             car.t_sci_apt, car.t_dur_apt = 0.0, 0.0
             handled_obs_list = []

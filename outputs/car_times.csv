@@ -1,52 +1,52 @@
 CAR         ,PID     ,Observations                  ,  t_sci_apt/hr,  t_dur_apt/hr, t_dur_cawg/hr,  CAR label                     
-OTE-28.2    ,1165    ,                              ,          0.00,          0.00,          9.92,  Pre-MIMF 2 \n PSF check       
+OTE-28.2    ,1165    ,5                             ,          2.31,          2.83,          9.92,  Pre-MIMF 2 \n PSF check       
 OTE-29      ,1166    ,                              ,          0.00,          0.00,         45.68,  MIMF 2                        
 MIR-004     ,1012    ,All                           ,          1.66,          3.20,          3.30,  Cal lamps                     
-MIR-005.1   ,1023    ,1-2                           ,          2.12,          2.32,          6.03,  Anneal \n Verification        
-MIR-005.2   ,1023    ,3-4                           ,          2.12,          2.32,          3.63,  Anneal 2                      
-MIR-005.3   ,1023    ,5-6-7                         ,          0.25,          0.89,          1.39,  Anneal 3                      
-MIR-005.4   ,1023    ,8                             ,          1.93,          2.03,          3.00,  Anneal 4                      
+MIR-005.1   ,1023    ,1-2                           ,          2.12,          2.41,          6.03,  Anneal \n Verification        
+MIR-005.2   ,1023    ,3-4                           ,          2.12,          2.41,          3.63,  Anneal 2                      
+MIR-005.3   ,1023    ,5-6-7                         ,          0.25,          0.90,          1.39,  Anneal 3                      
+MIR-005.4   ,1023    ,8                             ,          1.93,          2.10,          3.00,  Anneal 4                      
 MIR-005.5   ,1023    ,9                             ,          0.06,          0.23,          0.50,  Anneal 5                      
 MIR-005.6   ,1023    ,10-11-12-13                   ,          0.12,          1.35,          0.50,  Anneal 6                      
-MIR-005.7   ,1023    ,14                            ,          0.03,          0.71,          2.40,  Anneal 7                      
-MIR-005.8   ,1023    ,15                            ,          0.19,          0.87,          0.45,  Anneal 8                      
-MIR-005.9   ,1023    ,16-17-18-19                   ,          1.03,          2.79,          0.45,  Anneal 9                      
+MIR-005.7   ,1023    ,14                            ,          0.19,          0.56,          2.40,  Anneal 7                      
+MIR-005.8   ,1023    ,15                            ,          0.04,          0.24,          0.45,  Anneal 8                      
+MIR-005.9   ,1023    ,16-17-18-19                   ,          1.03,          2.33,          0.45,  Anneal 9                      
 MIR-005.10  ,1023    ,20-21-22                      ,          0.12,          0.90,          3.10,  Anneal 10                     
 MIR-005.11  ,1023    ,20-21-22                      ,          0.12,          0.90,          3.10,  Anneal 11                     
-MIR-007     ,1024    ,All                           ,          4.79,         10.49,         10.70,  Distortion                    
-MIR-011.1   ,1027    ,1-2-3-4-5-6-7-8-9-20          ,          6.52,         11.25,         11.70,  Phot zero pts                 
-MIR-011.2   ,1027    ,11-12-13-14-15-16-17-18-19    ,          0.68,          4.18,          3.64,  Phot zero pts                 
-MIR-012     ,1028    ,All                           ,          6.69,         10.17,         10.70,  Img PSF                       
-MIR-013     ,1029    ,All                           ,          2.02,          7.49,          7.05,  MRS/LRS TA                    
-MIR-014     ,1030    ,All                           ,          1.44,          1.80,          2.13,  RdNoise / Darks               
-MIR-015     ,1031    ,All                           ,          4.66,          8.85,         11.00,  MRS dispersion                
-MIR-016     ,1032    ,All                           ,          0.69,          1.58,          1.60,  Img/LRS glints                
+MIR-007     ,1024    ,All                           ,          4.79,         10.54,         10.70,  Distortion                    
+MIR-011.1   ,1027    ,1-2-3-4-5-6-7-8-9-20          ,          2.81,          9.16,         11.70,  Phot zero pts                 
+MIR-011.2   ,1027    ,11-12-13-14-15-16-17-18-19    ,          2.50,          2.83,          3.64,  Phot zero pts                 
+MIR-012     ,1028    ,All                           ,          4.96,          8.88,         10.70,  Img PSF                       
+MIR-013     ,1029    ,All                           ,          2.02,          7.82,          7.05,  MRS/LRS TA                    
+MIR-014     ,1030    ,All                           ,          1.44,          1.82,          2.13,  RdNoise / Darks               
+MIR-015     ,1031    ,All                           ,          2.66,          9.18,         11.00,  MRS dispersion                
+MIR-016     ,1032    ,All                           ,          0.69,          1.61,          1.60,  Img/LRS glints                
 MIR-002     ,1011    ,2                             ,          0.02,          0.12,          2.90,  FPS configs                   
-MIR-050     ,1037    ,All                           ,         22.27,         28.81,         28.55,  Coro contrast                 
-MIR-060     ,1046    ,All                           ,          2.21,          3.79,          3.94,  Detector func.                
-MIR-051     ,1038    ,All                           ,          1.43,          2.49,          2.50,  Coro centres                  
-MIR-018     ,1034    ,All                           ,          0.42,          1.77,          1.58,  LRS slit losses               
-MIR-052     ,1039    ,All                           ,          1.55,          3.60,          3.42,  Latent char.                  
-MIR-061     ,1047    ,All                           ,          2.32,          5.63,          5.63,  MRS ext flat                  
+MIR-050     ,1037    ,All                           ,         22.27,         29.51,         28.55,  Coro contrast                 
+MIR-060     ,1046    ,All                           ,          2.23,          4.05,          3.94,  Detector func.                
+MIR-051     ,1038    ,All                           ,          1.43,          2.52,          2.50,  Coro centres                  
+MIR-018     ,1034    ,All                           ,          0.42,          1.84,          1.58,  LRS slit losses               
+MIR-052     ,1039    ,All                           ,          1.55,          3.62,          3.42,  Latent char.                  
+MIR-061     ,1047    ,All                           ,          2.32,          5.68,          5.63,  MRS ext flat                  
 MIR-063     ,1049    ,All                           ,          5.21,          9.90,          9.68,  MRS PSF                       
-MIR-064.1   ,1050    ,1-2-3-4-6-7                   ,          4.23,          9.34,          9.30,  MRS phot sens/stab            
-MIR-064.2   ,1050    ,5                             ,          0.93,          2.04,          2.07,  MRS phot sens/stab            
-MIR-017     ,1033    ,All                           ,          1.76,          3.31,          3.41,  LRS phot sens’                
-MIR-055     ,1042    ,All                           ,          2.67,          8.24,          8.40,  LRS point src flat            
+MIR-064.1   ,1050    ,1-2-3-4-6-7                   ,          5.10,          9.39,          9.30,  MRS phot sens/stab            
+MIR-064.2   ,1050    ,5                             ,          0.83,          2.00,          2.07,  MRS phot sens/stab            
+MIR-017     ,1033    ,All                           ,          1.76,          3.38,          3.41,  LRS phot sens’                
+MIR-055     ,1042    ,All                           ,          2.67,          8.44,          8.40,  LRS point src flat            
 MIR-058.1   ,1045    ,1-4                           ,          0.00,          0.00,          9.58,  Coro PSF photom               
 MIR-058.2   ,1045    ,5-44                          ,          0.00,          0.00,          2.38,  Coro PSF scans                
-MIR-056     ,1043    ,All                           ,          4.12,         10.45,         10.16,  Coro ext flat                 
-MIR-053     ,1040    ,All                           ,          2.40,         16.04,         16.10,  Img ext. flat                 
+MIR-056     ,1043    ,All                           ,          4.49,         10.97,         10.16,  Coro ext flat                 
+MIR-053     ,1040    ,All                           ,          2.40,         16.07,         16.10,  Img ext. flat                 
 OTE-35      ,1172    ,All                           ,          0.03,          0.71,          0.95,  Pupil align.                  
 STL-002     ,1448    ,                              ,          0.00,          0.00,         24.70,  Obs. Straylight               
-MIR-075     ,1054    ,All                           ,          1.14,          3.86,          3.86,  LRS ext src flat              
-MIR-074     ,1053    ,All                           ,          1.51,          3.74,          3.87,  LRS PSF                       
-FGS-17.3    ,1022    ,17-18-19-20-21-22-23-24-25    ,          0.07,          5.80,          2.80,  FGS giant planet              
-MIR-073.1   ,1052    ,1-2-3                         ,          2.32,          4.27,          4.50,  Sky bgd, hot                  
+MIR-075     ,1054    ,All                           ,          0.94,          3.59,          3.86,  LRS ext src flat              
+MIR-074     ,1053    ,All                           ,          1.08,          3.44,          3.87,  LRS PSF                       
+FGS-17.3    ,1022    ,17-18-19-20-21-22-23-24-25    ,          0.07,          2.71,          2.80,  FGS giant planet              
+MIR-073.1   ,1052    ,1-2-3                         ,          2.32,          4.23,          4.50,  Sky bgd, hot                  
 MIR-073.2   ,1052    ,4-5-6                         ,          2.32,          4.34,          4.50,  Sky bgd, cold                 
-MIR-077     ,1261    ,All                           ,          1.67,          3.09,          3.15,  Bright source sens            
-MIR-078     ,1406    ,All                           ,          3.15,         11.41,         11.50,  Coro TA                       
-MIR-076     ,1259    ,All                           ,          0.42,          2.71,          2.65,  LRS dispersion                
-MIR-065     ,1519    ,All                           ,          8.57,          9.78,          3.25,  RSCD and\nNreset=1            
-MIR-065     ,1546    ,All                           ,          8.57,          9.78,          3.25,  RSCD and\nNreset=1            
-            ,        ,Total =                       ,        118.54,        239.34,        330.55,                                
+MIR-077     ,1261    ,All                           ,          1.67,          3.51,          3.15,  Bright source sens            
+MIR-078     ,1406    ,All                           ,          3.46,         12.10,         11.50,  Coro TA                       
+MIR-076     ,1259    ,All                           ,          0.18,          2.62,          2.65,  LRS dispersion                
+MIR-090     ,1449    ,                              ,          0.00,          0.00,          1.30,  'Moving TA'                   
+MIR-065     ,1519    ,All                           ,          4.36,          5.68,          3.25,  RSCD and\nNreset=1            
+            ,        ,Total =                       ,        103.08,        222.63,        328.60,                                

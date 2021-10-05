@@ -89,7 +89,7 @@ NG-ID,CAR_ID,    PID,ObsList,Short Title,Title
 904,  MIR-080,   RTC,  ,JT AA Recovery,'JT assisted anneals recovery'
 905,  MIR-081,   RTC,          ,JT AA Jitter,'MIRI JT Anneal //l with NIRCAM'
 906.?,MIR-082.?, RTC,,JT AA Final Config,MIRI JT Anneal Final Configuration
-924.1,MIR-065,  1519,All,RSCD and\nNreset=1,Frame reset and RSCD
-ERO-1.1,ERO-1.1, TBD,All,1st MIRI ERO,'1st MIRI ERO Observation'
-NG-new,MIR-065, 1546,All,Frame reset + \nRSCD,NG-new
+920,  MIR-090,  1449,,'Moving TA','MIRI moving target acquisition'
+924.1,MIR-065,1519,All,RSCD and\nNreset=1,Frame reset and RSCD
+ERO-?.2,MIR-ERO, TBD,All,MIRI ERO,'MIRI ERO Observation'
 END

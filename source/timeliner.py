@@ -69,7 +69,7 @@ rota = ShiftPlan.tidy_rota(rota)
 #ShiftPlan.plot_rota(rota, 'r5')
 #rota = ShiftPlan.remove_singles(rota)
 ShiftPlan.test_rota(rota)
-ShiftPlan.plot_staff_schedules(name='staff_schedule.png', show_greyout=False)
+ShiftPlan.plot_staff_schedules(name='staff_schedule.png', show_greyout=True)
 ShiftPlan.plot_rota(rota, 'rota')
 ShiftPlan.print(to_csv=True)
 
