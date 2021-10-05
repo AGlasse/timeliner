@@ -319,8 +319,6 @@ class CarUtils:
         for cpos in cpos_table:
             cpos_car_inst, cpos_pid, cpos_obs_list = cpos
             car, err_msg = CarUtils.get_car(cpos_car_inst)
-            if car == None:
-                nob = 1
             car.obs_list = []
             car.t_sci_apt, car.t_dur_apt = 0.0, 0.0
             handled_obs_list = []
