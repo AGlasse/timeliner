@@ -233,6 +233,23 @@ class ShiftPlan:
         return rota
 
     @staticmethod
+    def build_analysis_rota():
+        from person import Person
+        staff = ShiftPlan.staff
+        n_slots_max = 15            # No more than 15 analysts per day (plotting restriction!)
+        n_days = ShiftPlan.n_days
+        a_rota = np.full((n_slots_max, n_days), None)
+        for person in staff:
+            for col, role in enumerate(person.timetable):
+                is_analyst = role == Person.role_analyst or role == Person.role_sme_analyst
+                if is_analyst:
+                    for slot in range(0, n_slots_max):
+                        if a_rota[slot, col] == None:
+                            a_rota[slot, col] = person
+                            break
+        return a_rota
+
+    @staticmethod
     def allocate_prescheduled(rota):
         """ Allocate the days in each person's timetable which are prescheduled to be on shift. """
         staff = ShiftPlan.staff
@@ -285,6 +302,7 @@ class ShiftPlan:
                         rota[tom_row, day+1] = rota[row, day+1]
                         rota[row, day+1] = person
         return rota
+
 
     @staticmethod
     def _plot_calendar_grid(n_panes, xrange, yrange, **kwargs):
@@ -366,15 +384,21 @@ class ShiftPlan:
         return fig, axs
 
     @staticmethod
-    def plot_rota(rota, filename):
+    def plot_rota(rota, filename, **kwargs):
         from plot_utils import Plot
         import matplotlib.transforms as mtransforms
         from matplotlib.patches import Polygon, Rectangle, Circle
         from car import Car
         import calendar
 
+        is_analysis = kwargs.get('is_analysis', False)
+        link_colour, title = 'blue', 'MOC Rota'
+        if is_analysis:
+            link_colour, title = 'green', 'Analysis/Support Rota'
+
         n_panes, xrange, yrange = 3, 70, 105         # Calendar; 3 panes, 105 rows, 70 days/plot
         fig, axs = ShiftPlan._plot_calendar_grid(n_panes, xrange, yrange)
+        fig.suptitle(title)
 
         free = ShiftPlan.free
         n_slots, n_days = rota.shape
@@ -421,7 +445,7 @@ class ShiftPlan:
                                         if xstart > xon and xstart < xoff:
                                             task.ysmes.append(ybarmid)
                                             ax.plot([xstart], [ybarmid],
-                                                    marker='o', ms=5.0, mfc='red', fillstyle='full')
+                                                    marker='o', ms=5.0, mfc=link_colour, fillstyle='full')
                         if on_today != free:        # New person on shift
                             xon = x
                     on_yesterday = on_today
@@ -442,15 +466,15 @@ class ShiftPlan:
                 text = task.idt_id + ', ' + label
                 colour = 'green' if task.type == 'CAP' else 'black'
                 ax.text(xstart, ytask, text, color=colour)
-                ax.plot([xstart, xend], [ytask-0.2, ytask-0.2], color='red')
+                ax.plot([xstart, xend], [ytask-0.2, ytask-0.2], color=link_colour)
                 ylo = ylim[1]
 
                 if len(task.ysmes) > 0:
                     for y in task.ysmes:
                         ylo = y if y < ylo else ylo
                         ax.plot([xstart], [ytask],
-                                marker='o', ms=5.0, mfc='red', mec='black', fillstyle='full')
-                    ax.plot([xstart, xstart], [ylo, ytask], color='red', lw=1.0, ls='dotted')
+                                marker='o', ms=5.0, mfc=link_colour, mec=link_colour, fillstyle='full')
+                    ax.plot([xstart, xstart], [ylo, ytask], color=link_colour, lw=1.0, ls='dotted')
                 slot += 1
                 if slot == n_task_slots:
                     slot = 0
