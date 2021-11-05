@@ -352,7 +352,7 @@ class ShiftPlan:
             lyr, lmo = ShiftPlan.launchyear, ShiftPlan.launchmonth
             lda, lti = ShiftPlan.launchdate, ShiftPlan.launchhour
             fmt = 'Launch at {:5.2f} UT'
-            launch_text = fmt.format(lyr, lmo, lda, lti)
+            launch_text = fmt.format(lti)
             ax.text(xl+0.001*xrange, yrange + y_pitch, launch_text, color='blue')
             year = ShiftPlan.launchyear
             month = ShiftPlan.launchmonth + 1
