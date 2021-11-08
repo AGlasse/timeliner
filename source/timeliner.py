@@ -64,7 +64,7 @@ a_rota = ShiftPlan.build_analysis_rota()
 a_rota = ShiftPlan.tidy_rota(a_rota)
 ShiftPlan.plot_rota(a_rota, 'analysis_rota', is_analysis=True)
 
-ShiftPlan.plot_staff_schedules(name='staff_schedule.png', show_greyout=False)
+ShiftPlan.plot_staff_schedules(name='staff_schedule.png', show_greyout=True)
 ShiftPlan.plot_rota(rota, 'moc_rota')
 
 

@@ -66,14 +66,13 @@ class Person:
 
     def _get_allocated(self):
         """ Find the number of days currently allocated to this person to be available
-        in Baltimore. This includes rest days, but excludes blackout days.
+        on console.
         """
         tt = self.timetable
         n_total = len(tt)
-        n_free = len(np.where(tt == self.role_free)[0])
-        n_blackout = len(np.where(tt == self.blackout)[0])
-        n_greyout = len(np.where(tt == self.greyout)[0])
-        n_allocated = n_total - (n_free + n_blackout + n_greyout)
+        n_console = len(np.where(tt == self.role_console)[0])
+        n_sme_console = len(np.where(tt == self.role_sme_console)[0])
+        n_allocated = n_sme_console + n_console
         return n_allocated
 
     def _find_free_slot(self, rota, col, n_slots):
@@ -107,12 +106,12 @@ class Person:
         or Friday to help with badging and travel.
         """
         daily_slots = ShiftPlan.daily_slot_quota
-        car_day = int(task.t_start + ShiftPlan.launchhour/24.0)
-        car_col = car_day - ShiftPlan.start_md
-        start_col = car_col - self.arrival_buffer            # start_md - ShiftPlan.start_day
-        end_col = car_col + self.departure_buffer
+        task_day = int(task.t_start + ShiftPlan.launchhour/24.0)
+        task_col = task_day - ShiftPlan.start_md
+        start_col = task_col - self.arrival_buffer            # start_md - ShiftPlan.start_day
+        end_col = int(task_col + task.t_dur)                         #self.departure_buffer
         if task.type == 'KDP':
-            start_col, end_col = car_col, car_col
+            start_col, end_col = task_col, task_col
 
         for col in range(start_col, end_col + 1):
             n_slots = daily_slots[col]
@@ -139,7 +138,7 @@ class Person:
                             if task.type == 'KDP':              # Prioritise over MOC activities.
                                 role = Person.role_kdp
                             else:
-                                if col == car_col:
+                                if col == task_col:
                                     role = Person.role_sme_analyst
                                 else:
                                     role = Person.role_analyst
@@ -152,18 +151,18 @@ class Person:
                     else:   # Its a CAR. May support as an SME analyst (not in rota)
                         if requested_role == 'A':
                             role = Person.role_analyst
-                            if col == car_col:
+                            if col == task_col:
                                 role = Person.role_sme_analyst
                             if is_moc or is_sme_moc:            # Currently assigned to be in MOC
                                 rota = self._remove_from_rota(rota, col)
                         else:   # Requested role is in MOC
                             if is_moc or is_sme_moc:            # Already allocated in MOC
-                                role = Person.role_sme_console if col == car_col else Person.role_console
+                                role = Person.role_sme_console if col == task_col else Person.role_console
                             else:
                                 role = Person.role_console      # Default role for CARs
                                 row = self._find_free_slot(rota, col, n_slots)  # Find free slot in rota
                                 if row is not None:
-                                    if col == car_col:
+                                    if col == task_col:
                                         role = Person.role_sme_console
                                     rota[row, col] = self       # Allocate CARs on rota.
                 self.timetable[col] = role                      # Allocate all tasks in personal timetable
@@ -201,8 +200,6 @@ class Person:
                     if row is not None:
                         rota[row, col] = self
                         self.timetable[col] = Person.role_console
-        if self.surname == 'Murray':
-            nob = 1
         return rota
 
     @staticmethod
