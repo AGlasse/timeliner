@@ -1,6 +1,4 @@
 NG-ID,CAR_ID,    PID,ObsList,Short Title,Title
-9.1,  NG-9.1,    RTC,       ,ICDH On I,ICDH Power On and initialization (Part 1)
-9.2,  NG-9.2,    RTC,       ,ICDH On II,ICDH power On and initialization (pt 2: Loads & Ver
 18.1, NG-18.1,   RTC,       ,ICE On I,MIRI ICE Power ON and Initialization
 18.2, NG-18.2,   RTC,       ,ICE On II,MIRI ICE Power ON and Initialization
 19,   MIR-042.1, RTC,      ,CCC open,MIRI CCC Unlock and Opening
@@ -58,7 +56,9 @@ NG-ID,CAR_ID,    PID,ObsList,Short Title,Title
 352,  OTE-35,1172,All,Pupil align.,MIRI Pupil Alignment Check
 700,  NIS-16,RTC,,NIRISS wavecal.,NIRISS GR150C/R Wavelength Calibration
 752,  NG-752,RTC,,Slew to HOT’,Obs slew to hot
-754,  STL-002,1448,All,Obs. Straylight,Stray Light Correlation (includes slew to 5 attitudes)
+754.1,STL-002.1,1448,7.8,Obs. Bgd (hi zodi),Stray Light Correlation (High zodi pointing)
+754.2,STL-002.2,1448,1.9,Obs. Bgd (GC),Stray Light Correlation (Gal Centre)
+754.3,STL-002.3,1448,3-6.10-11.13-16.,Obs. Bgd (min zodi),Stray Light Correlation (min zodi benchmark)
 764.1,MIR-071.1,RTC,       ,ICE basic func,MIRI ICE Warm Basic Functional Test
 764.2,MIR-071.2,RTC,       ,ICE basic func,MIRI ICE Warm Basic Functional Test
 764.3,MIR-071.3,RTC,       ,ICE basic func,MIRI ICE Basic Functional Test (COLD)
@@ -73,7 +73,7 @@ NG-ID,CAR_ID,    PID,ObsList,Short Title,Title
 808,  NG-808,    RTC,,Slew to COLD,Obs slew to cold
 812.1,MIR-073.1,1052,1.2.3,Sky bgd,MIRI Sky background variation with telescope pointi
 812.2,MIR-073.2,1052,4.5.6,Sky bgd,MIRI Sky background variation with telescope pointi
-813,  MIR-072,   RTC,      ,Img pix flat,MIRI Imager Pixel Flat
+813.1, MIR-072,   RTC,      ,Img pix flat,MIRI Imager Pixel Flat
 815,  NG-815,    RTC,      ,FPE On,MIRI FPE Power ON
 817,  MIR-042.2, RTC,       ,FPM htr on,MIRI FPM Heater Power ON during Cooldown
 818,  MIR-042.9, RTC,       ,FPM htr off,MIRI FPM Heater Power OFF
