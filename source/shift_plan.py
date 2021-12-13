@@ -97,7 +97,7 @@ class ShiftPlan:
         from cap_utils import CapUtils
         from person import Person
 
-        path = './inputs/staff.csv'
+        path = '../inputs/staff.csv'
         with open(path, 'r') as file:
             text_block = file.read()
         line_list = text_block.split('\n')
@@ -158,7 +158,7 @@ class ShiftPlan:
 
         to_csv = kwargs.get('to_csv', False)
         if to_csv:
-            csv_file = "./outputs/shift_plan_basis.csv"
+            csv_file = "../outputs/shift_plan_basis.csv"
             csv = open(csv_file, 'w')
         att_hdr = Person.get_attendance_header_string(**kwargs)
         header_str = Person.get_header_string(**kwargs) + att_hdr
@@ -479,7 +479,7 @@ class ShiftPlan:
                 if slot == n_task_slots:
                     slot = 0
 
-        filepath = './outputs/' + filename + '.png'
+        filepath = '../outputs/' + filename + '.png'
         fig.savefig(filepath)
         return
 
@@ -552,7 +552,7 @@ class ShiftPlan:
                 bar = Rectangle((xmin-1.0, ybar), 1.0, 0.9 * ybarheight, fc=person.bar_colour, fill=True)
                 ax.add_patch(bar)
 
-        filepath = './outputs/' + name
+        filepath = '../outputs/' + name
         fig.savefig(filepath)
         return
 

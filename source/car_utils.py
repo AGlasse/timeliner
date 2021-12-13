@@ -16,7 +16,7 @@ class CarUtils:
         """ Read in the identifiers for all CARs of interest to MIRI
         :return: miri_car_identifiers
         """
-        path = './inputs/car_obs_table.csv'
+        path = '../inputs/car_obs_table.csv'
         print('Reading identifiers for MIRI related CARs from ' + path)
         with open(path, 'r') as file:
             text_block = file.read()
@@ -227,7 +227,7 @@ class CarUtils:
         CarUtils.cars = out_cars
 
         # Write CAWG change requests to a file
-        cr_file = open('./outputs/miri_cawg_crs', 'w')
+        cr_file = open('../outputs/miri_cawg_crs', 'w')
         fmt = "{:>6s},{:>10s},{:s}"
         hdr = fmt.format('Row', 'Priority', 'Change')
         cr_file.write(hdr + "\n")
@@ -305,7 +305,7 @@ class CarUtils:
             apt_obs_t_dur = float(tokens[33]) / 3600.0
             apt_obs_table.append((apt_car_id, apt_pid, apt_obs, apt_obs_t_sci, apt_obs_t_dur))
 
-        car_times_file = './outputs/car_times.csv'
+        car_times_file = '../outputs/car_times.csv'
         csv_file = open(car_times_file, 'w')
 
         t_sci_apt_tot, t_dur_apt_tot, t_dur_cawg_tot = 0.0, 0.0, 0.0

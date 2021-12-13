@@ -8,7 +8,7 @@ class Key:
 
         tab = 120.0
         margin = 2.0
-        path = './inputs/key.txt'
+        path = '../inputs/key.txt'
         with open(path, 'r') as file:
             text_block = file.read()
         line_list = text_block.split('\n')

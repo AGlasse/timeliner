@@ -82,7 +82,7 @@ class DataFlow:
             y_key = Conduit.xy_origin[1]
 
             key.plot(ax, x_key, y_key)
-        fig.savefig('./outputs/dataflow_' + tgt_kdp_id + '.png')
+        fig.savefig('../outputs/dataflow_' + tgt_kdp_id + '.png')
         plot.clear()
         return
 

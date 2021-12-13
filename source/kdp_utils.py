@@ -21,7 +21,7 @@ class KdpUtils:
     def _read_kdps(self):
         from cap_utils import CapUtils
 
-        path = './inputs/kdps.csv'
+        path = '../inputs/kdps.csv'
 
         with open(path, 'r') as file:
             text_block = file.read()

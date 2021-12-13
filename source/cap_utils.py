@@ -14,7 +14,7 @@ class CapUtils:
         return
 
     def _read_caps(self):
-        path = './inputs/caps.csv'
+        path = '../inputs/caps.csv'
         with open(path, 'r') as file:
             text_block = file.read()
         line_list = text_block.split('\n')
