@@ -17,7 +17,7 @@ class ShiftPlan:
     """
     month_names = ['January', 'February', 'March', 'April', 'May', 'June',
                    'Jul', 'Aug', 'Sep', 'Oct', 'November', 'December']
-    launchyear, launchmonth, launchdate, launchhour = 2021, 12, 24, 12.20
+    launchyear, launchmonth, launchdate, launchhour = 2021, 12, 25, 12.20
     launchdate_last_monday = 13             # Date of month of the last Monday before launch
     start_md, end_md = -3, 190
     n_days = end_md - start_md + 1
