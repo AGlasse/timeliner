@@ -92,17 +92,16 @@ class CarUtils:
         """
         skip_rows = []          # eg [720] to skip row 720
         ng_renames = {}         # eg {'74.4': '74.6'}
-        idt_renames = {'217.1': 'MIR-058.1', '217.2': 'MIR-058.2'}        # eg {'88': 'MIR-011.1', '88.01': 'MIR-011.2'}
+        idt_renames = {'217.1': 'MIR-058.1', '217.2': 'MIR-058.2'}
         removes = ['882.2', '76.2',
                    '774.1', '774.2', '774.4',                       # Non-MIRI parts of FGS-017
                   ]
-
-        durations = []          # eg [('MIR-005.1', 5.0)]
+        durations = []
         add_afters = [] #(Car(-1, 'MIR-011.1', 'Phot zero pts.', 'Photometric zero points',
                         #   '88.1', '1027', 'All',
                         #   tstart=-1.0, tdur=1.0), 'MIR-076')
                       #]
-        add_befores = []  # eg [(Car(-1, 'MIR-005.8', 'Anneal 8', 'Anneal before MIR-061', '74.8', '1023')]
+        add_delays = [('NG-133.1', 12.0)]       # Add 12 days to the start time of all CARs after transition to State 4
 
         combines = [('MIR-082',                     # Combined CAR name
                      'MIR-082.1', 'MIR-082.2', 'MIR-082.3', 'MIR-082.4', 'MIR-082.5'),  # ..included
@@ -123,6 +122,7 @@ class CarUtils:
 
         cawg_crs = []       # List of CAWG change requests
         out_cars = []
+        t_delay = 0.0       # Delay to add to start time of all CARs (incremented by add_delays)
         for car in raw_car_list:
             cr_text = None
             skip_ga = 'analysis' in car.title.lower()   # Reject all analysis
@@ -180,17 +180,13 @@ class CarUtils:
                         fmt = "{:>6d},{:>10s},Insert new CAR {:s} immediately after and linked to {:s}"
                         cr_text = fmt.format(car.cawg_row, 'High', new_car.idt_id, car.idt_id)
                         cawg_crs.append(cr_text)
-                for add_before in add_befores:
-                    post_car_idt = add_before[1]
-                    if car.idt_id == post_car_idt:
-                        new_car = add_before[0]
-                        car.add_source(new_car)
-                        t_start = car.t_start - new_car.t_dur
-                        new_car.t_start = t_start
-                        out_cars.insert(-1, new_car)
-                        fmt = "{:>6d},{:>10s},Insert new CAR {:s} immediately before and linked to {:s}"
-                        cr_text = fmt.format(car.cawg_row, 'High', new_car.idt_id, car.idt_id)
-                        cawg_crs.append(cr_text)
+
+                car.t_start += t_delay  # Add current delay to all CARs
+                for add_delay in add_delays:
+                    delay_after_car_idt, t_delay_after = add_delay
+                    if car.idt_id == delay_after_car_idt:   # Accumulate delay after this CAR
+                        t_delay += t_delay_after
+
             if cr_text is not None:
                 print(cr_text)
 

@@ -124,8 +124,8 @@ class Person:
             is_unavailable = is_blackout or is_greyout
             if is_unavailable:
                 md = col + ShiftPlan.start_md
-                fmt = "Unable to schedule {:s} for {:s} on L+{:d}"
-                err_msg = fmt.format(self.surname, task.idt_id, md)
+                fmt = "Unable to schedule {:s} for {:s} ({:s}) on L+{:d}"
+                err_msg = fmt.format(self.surname, task.idt_id, task.label, md)
                 print(err_msg)
 
             else:
