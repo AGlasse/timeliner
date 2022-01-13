@@ -48,7 +48,7 @@ class ShiftPlan:
         n_slots_max = 15
         n_slots_nominal = 10                                            # More slots for peak stress
         daily_slot_quota = np.full((n_days), n_slots_nominal)           # Count of slots on each day
-        unusual_slots = [(-6, -1, 3), (3, 18, 11), (93, 103, 15), (155, 168, 15), (185, 190, 3)]     # L+a L+b nshifts
+        unusual_slots = [(-6, -1, 3), (3, 18, 11), (105, 113, 15), (165, 178, 15), (195, 200, 3)]     # L+a L+b nshifts
         for uslot in unusual_slots:
             col1 = uslot[0] - ShiftPlan.start_md
             col2 = uslot[1] - ShiftPlan.start_md
