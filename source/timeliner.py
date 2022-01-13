@@ -40,7 +40,7 @@ KdpUtils.schedule_kdps()
 kdps = KdpUtils.kdps
 
 print()
-dataflow = True        # True = Replot dataflow diagrams
+dataflow = False        # True = Replot dataflow diagrams
 if dataflow:
     dataflow = DataFlow()
     dc_keys = DataFlow.col_dict.keys()

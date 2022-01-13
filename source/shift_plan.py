@@ -114,6 +114,7 @@ class ShiftPlan:
                     row += 1
                 else:
                     initial, forename, surname, email, organisation = (token.strip() for token in tokens[0:5])
+                    print("Reading scheding info for {:s}".format(surname))
                     colour = tokens[5]
                     ident = initial, forename, surname, email, organisation, colour
                     max_nweeks, max_nweeks_block  = (int(token.strip()) for token in tokens[6:8])
