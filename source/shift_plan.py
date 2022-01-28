@@ -304,7 +304,6 @@ class ShiftPlan:
                         rota[row, day+1] = person
         return rota
 
-
     @staticmethod
     def _plot_calendar_grid(n_panes, xrange, yrange, **kwargs):
         from plot_utils import Plot

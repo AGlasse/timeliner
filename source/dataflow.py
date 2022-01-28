@@ -28,7 +28,7 @@ class DataFlow:
         xy_origin = [xlim[0] + 50, ylim[1] - 100]
 
         # End of row CARS for 'All' case
-        car_breaks = ['MIR-007', 'MIR-050', 'MIR-064.1', 'MIR-058.2', 'MIR-077']
+        car_breaks = ['MIR-007', 'MIR-064.1', 'MIR-056', 'MIR-058.2', 'MIR-077']
 
         idx = DataFlow.col_dict[tgt_kdp_id]
         cols = DataFlow.cols_list[idx]

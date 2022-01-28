@@ -15,4 +15,4 @@ sources,CAP-202-I,CAP-501,CAP-502,CAP-503,CAP-504
 M-7,Bright target rdy,M-7,'MIRI Bright target science enabled',cyan
 sources,CAP-104,CAP-106,CAP-404,CAP-407
 M-EOC,End of Comm.,M-EOC,'End of commissioning',blue
-sources,CAP-108,CAP-109,CAP-202-II,CAP-405-II,CAP-601,CAP-302
+sources,CAP-108,CAP-109,CAP-202-II,CAP-405-II,CAP-601,CAP-302,CAP-106
