@@ -15,7 +15,7 @@ YAN,Yannis,Argyriou,Ioannis.Argyriou@kuleuven.be,EC,aquamarine,10,3,211025:22032
 PBO,Patrice,Bouchet,patrice.bouchet@cea.fr,EC,crimson,3,3,,211212:220528,,220529:220629,,,,,,,,,,,,,,,,,,,
 JER,Jeroen,Bouwman,bouwman@mpia-hd.mpg.de,EC,mediumslateblue,8,3,211222:220106;220305:220313,210107:220304;220408:220507,,220604:220629,A:CAP-302,A:MIR-076,A:MIR-018,A:MIR-074,A:CAP-301,A:CAP-305,A:M-5,,,,,,,,,,,
 STA,Stacey,Bright,bright@stsci.edu,STScI,lime,10,3,220118:220118;220124:220206;220214:220225;220330:220330,220207:220213;220226:220329;220331:220516;220604:220606,,,,,,,,,,,,,,,,,,,,,
-CHR,Christophe,Cossou,christophe.cossou@cea.fr,EC,mediumpurple,10,3,211220:220105,211212:220314;220421:220424,,220402:220409;220505:220514;220521:220623,A:MIR-051,A:MIR-052,A:MIR-005.1,A:MIR-005.2,A:MIR-011.1,A:MIR-012,A:MIR-016,A:MIR-058.1,A:MIR-058.2,A:MIR-077,A:MIR-050,A:CAP-502,A:M-6,,,,,,
+CHR,Christophe,Cossou,christophe.cossou@cea.fr,EC,mediumpurple,10,3,211220:220105;220419:220512,211212:220314,,220402:220409;220505:220514;220521:220623,A:MIR-051,A:MIR-052,A:MIR-005.1,A:MIR-005.2,A:MIR-011.1,A:MIR-012,A:MIR-016,A:MIR-058.1,A:MIR-058.2,A:MIR-077,A:MIR-050,A:CAP-502,A:M-6,,,,,,
 ALA,Alain,Coulais,alain.coulais@obspm.fr,EC,fuchsia,6,3,,211212:220314,,,,,,,,,,,,,,,,,,,,,
 MIS,Misty,Cracraft,cracraft@stsci.edu,STScI,lightcoral,10,3,211215:220106,220125:220206;220307:220324,,,M:MIR-014,,,,,,,,,,,,,,,,,,
 WIM,Wim,deMeester,wim.demeester@ster.kuleuven.be,EC,peru,2,2,211212:220109;220124:220801,,220110:220124,,,,,,,,,,,,,,,,,,,,
