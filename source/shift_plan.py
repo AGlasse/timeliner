@@ -19,7 +19,7 @@ class ShiftPlan:
                    'Jul', 'Aug', 'Sep', 'Oct', 'November', 'December']
     launchyear, launchmonth, launchdate, launchhour = 2021, 12, 25, 12.20
     launchdate_last_monday = 13             # Date of month of the last Monday before launch
-    start_md, end_md = -3, 190
+    start_md, end_md = 60, 190
     n_days = end_md - start_md + 1
     console_rota = []
     free = None
@@ -396,7 +396,7 @@ class ShiftPlan:
         if is_analysis:
             link_colour, title = 'green', 'Analysis/Support Rota'
 
-        n_panes, xrange, yrange = 3, 70, 105         # Calendar; 3 panes, 105 rows, 70 days/plot
+        n_panes, xrange, yrange = 2, 70, 105         # Calendar; 3 panes, 105 rows, 70 days/plot
         fig, axs = ShiftPlan._plot_calendar_grid(n_panes, xrange, yrange)
         fig.suptitle(title)
 
@@ -436,7 +436,7 @@ class ShiftPlan:
                                     bar = Rectangle((xon, ybar), xw, 0.9 * ybarheight, **bar_args)
                                     ax.add_patch(bar)
                                     bartext = on_yesterday.surname
-                                    ax.text(xon, ybar, bartext,
+                                    ax.text(xon, ybar, bartext, fontsize=18,
                                             ha='left', va='bottom', color=text_colour)
                                     sme_tasks = on_yesterday.sme_tasks     # Plot SME tasks on timeline
                                     for task, role in sme_tasks:
@@ -465,7 +465,8 @@ class ShiftPlan:
                 label = ShiftPlan.strip_line_feeds(task.label)
                 text = task.idt_id + ', ' + label
                 colour = 'green' if task.type == 'CAP' else 'black'
-                ax.text(xstart, ytask, text, color=colour)
+                colour = 'blue' if task.type == 'KDP' else colour
+                ax.text(xstart, ytask, text, color=colour, fontsize=18)
                 ax.plot([xstart, xend], [ytask-0.2, ytask-0.2], color=link_colour)
                 ylo = ylim[1]
 
@@ -548,7 +549,7 @@ class ShiftPlan:
                         xon = x
                     role_yesterday = role_today
                 text = person.get_allocation_text()
-                ax.text(xmin-0.1, ybar, text, ha='right', va='bottom', color='black')
+                ax.text(xmin-0.1, ybar, text, ha='right', va='bottom', color=person.fg_colour)
                 bar = Rectangle((xmin-1.0, ybar), 1.0, 0.9 * ybarheight, fc=person.bar_colour, fill=True)
                 ax.add_patch(bar)
 

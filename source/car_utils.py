@@ -100,8 +100,8 @@ class CarUtils:
         add_afters = [] #(Car(-1, 'MIR-011.1', 'Phot zero pts.', 'Photometric zero points',
                         #   '88.1', '1027', 'All',
                         #   tstart=-1.0, tdur=1.0), 'MIR-076')
-                      #]
-        add_delays = [('NG-133.1', 12.0)]       # Add 12 days to the start time of all CARs after transition to State 4
+        # Add 13.2 days to align transition to State 4 with CAST for 8th March 2022
+        add_delays = [('MIR-042.6', 6.7), ('MIR-042.7', 1.5)]
 
         combines = [('MIR-082',                     # Combined CAR name
                      'MIR-082.1', 'MIR-082.2', 'MIR-082.3', 'MIR-082.4', 'MIR-082.5'),  # ..included

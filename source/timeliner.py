@@ -40,11 +40,11 @@ KdpUtils.schedule_kdps()
 kdps = KdpUtils.kdps
 
 print()
-dataflow = True        # True = Replot dataflow diagrams
+dataflow = False        # True = Replot dataflow diagrams
 if dataflow:
     dataflow = DataFlow()
     dc_keys = DataFlow.col_dict.keys()
-    for dc_key in dc_keys:      #['M-1']:
+    for dc_key in dc_keys:
         print('Plotting ' + dc_key)
         dataflow.plot_dataflow(cars, caps, kdps, cawg_date, kdp_id=dc_key)
 
@@ -62,11 +62,11 @@ rota = ShiftPlan.tidy_rota(rota)
 ShiftPlan.test_rota(rota)
 a_rota = ShiftPlan.build_analysis_rota()
 a_rota = ShiftPlan.tidy_rota(a_rota)
-ShiftPlan.plot_rota(a_rota, 'analysis_rota', is_analysis=True)
 
-ShiftPlan.plot_staff_schedules(name='staff_schedule.png', show_greyout=False)
-ShiftPlan.plot_rota(rota, 'moc_rota')
-
+date_tag = '220311'
+ShiftPlan.plot_rota(a_rota, 'analysis_rota' + date_tag, is_analysis=True)
+ShiftPlan.plot_staff_schedules(name='staff_calendar' + date_tag + '.png', show_greyout=True)
+ShiftPlan.plot_rota(rota, 'moc_rota' + date_tag)
 
 ShiftPlan.print(to_csv=True)
 

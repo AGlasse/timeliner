@@ -15,13 +15,14 @@ class Person:
     role_analyst = 'a'      # In Baltimore but not on shift (Analysis or support role)
     role_sme_analyst = 'A'  # Analyst for a CAR running on this day
     role_kdp = 'K'          # Supporting a KDP on this day
+    role_remote_analyst = 'R'
 
     def __init__(self, idents, availabilty):
         self.initial, self.forename, self.surname, self.email, self.organisation, self.bar_colour = idents
         self.is_reserve, max_nweeks, max_nweeks_block, self.blackout_days, self.greyout_days, schedule_days, analysis_days = availabilty
-        self.fg_colour = 'black'
+        self.fg_colour = 'blue'
         if self.organisation in ['ESA', 'STScI', 'GSFC']:
-            self.fg_colour = 'blue'
+            self.fg_colour = 'black'
         self.max_allocation = 7 * max_nweeks
         self.max_contiguous_allocation = 7 * max_nweeks_block
         self.contiguously_allocated = 0
@@ -69,7 +70,6 @@ class Person:
         on console.
         """
         tt = self.timetable
-        n_total = len(tt)
         n_console = len(np.where(tt == self.role_console)[0])
         n_sme_console = len(np.where(tt == self.role_sme_console)[0])
         n_allocated = n_sme_console + n_console
@@ -124,7 +124,10 @@ class Person:
             is_unavailable = is_blackout or is_greyout
             if is_unavailable:
                 md = col + ShiftPlan.start_md
-                fmt = "Unable to schedule {:s} for {:s} ({:s}) on L+{:d}"
+                if requested_role == 'R':
+                    fmt = "{:s} analysing {:s} ({:s}) remotely on L+{:d}"
+                else:
+                    fmt = "Unable to schedule {:s} for {:s} ({:s}) on L+{:d}"
                 err_msg = fmt.format(self.surname, task.idt_id, task.label, md)
                 print(err_msg)
 
