@@ -65,7 +65,7 @@ a_rota = ShiftPlan.tidy_rota(a_rota)
 
 date_tag = '220311'
 ShiftPlan.plot_rota(a_rota, 'analysis_rota' + date_tag, is_analysis=True)
-ShiftPlan.plot_staff_schedules(name='staff_calendar' + date_tag + '.png', show_greyout=True)
+ShiftPlan.plot_staff_schedules(name='staff_calendar' + date_tag + '.png', show_greyout=False)
 ShiftPlan.plot_rota(rota, 'moc_rota' + date_tag)
 
 ShiftPlan.print(to_csv=True)
