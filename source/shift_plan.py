@@ -19,7 +19,7 @@ class ShiftPlan:
                    'Jul', 'Aug', 'Sep', 'Oct', 'November', 'December']
     launchyear, launchmonth, launchdate, launchhour = 2021, 12, 25, 12.20
     launchdate_last_monday = 13             # Date of month of the last Monday before launch
-    start_md, end_md = 60, 190
+    start_md, end_md = -3, 190
     n_days = end_md - start_md + 1
     console_rota = []
     free = None
@@ -396,7 +396,7 @@ class ShiftPlan:
         if is_analysis:
             link_colour, title = 'green', 'Analysis/Support Rota'
 
-        n_panes, xrange, yrange = 2, 70, 105         # Calendar; 3 panes, 105 rows, 70 days/plot
+        n_panes, xrange, yrange = 3, 70, 105         # Calendar; 3 panes, 105 rows, 70 days/plot
         fig, axs = ShiftPlan._plot_calendar_grid(n_panes, xrange, yrange)
         fig.suptitle(title)
 
