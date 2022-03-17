@@ -33,8 +33,8 @@ MIR-064.1   ,1050    ,1-2-3-4-6-7                   ,          5.10,          9.
 MIR-064.2   ,1050    ,5                             ,          0.83,          2.00,          2.23,  MRS phot sens/stab            
 MIR-017     ,1033    ,All                           ,          1.76,          3.38,          3.68,  LRS phot sens’                
 MIR-055     ,1042    ,All                           ,          2.67,          8.44,          8.68,  LRS point src flat            
-MIR-058.1   ,1045    ,1-4                           ,          0.00,          0.00,          5.92,  Coro PSF photom               
-MIR-058.2   ,1045    ,5-44                          ,          0.00,          0.00,          5.13,  Coro PSF scans                
+MIR-058.1   ,1045    ,5-44                          ,          0.00,          0.00,          5.92,  Coro PSF scans                
+MIR-058.2   ,1045    ,1-4                           ,          0.00,          0.00,          5.13,  Coro PSF photom               
 MIR-056     ,1043    ,All                           ,          4.49,         10.97,         11.53,  Coro ext flat                 
 MIR-053     ,1040    ,All                           ,          2.40,         16.07,         16.31,  Img ext. flat                 
 OTE-35      ,1172    ,All                           ,          0.03,          0.71,          0.95,  Pupil align.                  

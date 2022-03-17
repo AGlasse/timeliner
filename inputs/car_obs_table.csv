@@ -47,8 +47,8 @@ NG-ID,CAR_ID,    PID,ObsList,Short Title,Title
 168.2,MIR-064.2,1050,5,MRS phot sens/stab,MIRI MRS Photometric Sensitivity and Stability (Par
 214,  MIR-017,1033,All,LRS phot sens’,MIRI LRS Photometric Sensitivity and Stability
 216,  MIR-055,1042,All,LRS point src flat,MIRI External Flat Field - Low Resolution Spectrome
-217.1,MIR-058.1,1045,1-4,Coro PSF photom,MIRI Coronagraph PSF - Photometry
-217.2,MIR-058.2,1045,5-44,Coro PSF scans,MIRI Coronagraph PSF - Radial/transition scans
+217.1,MIR-058.1,1045,5-44,Coro PSF scans,MIRI Coronagraph PSF - Radial/transition scans
+217.2,MIR-058.2,1045,1-4,Coro PSF photom,MIRI Coronagraph PSF - Photometry
 218,  MIR-056,1043,All,Coro ext flat,MIRI External Flat Field - Coronagraphs
 227,  MIR-053,1040,All,Img ext. flat,MIRI External Flat Field - Imager
 270.1,OTE-34.1,RTC,,SIAF update,WF - SIAF Update (MIRI  FGS) - data
