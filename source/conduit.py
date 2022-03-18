@@ -129,7 +129,7 @@ class Conduit:
         return u
 
     @staticmethod
-    def get_free_col(tgt_row, start_col):#
+    def get_free_col(tgt_row, start_col):
 
         col = start_col
         occ = Conduit.cell_occupation
